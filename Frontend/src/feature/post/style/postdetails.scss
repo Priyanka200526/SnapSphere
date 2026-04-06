@@ -1,0 +1,37 @@
+.insta-post-feed {
+  height: 100vh;
+  overflow-y: scroll;
+  /* vertical scroll */
+}
+
+.insta-post {
+  border-bottom: 1px solid #ccc;
+  padding: 1rem 0;
+}
+
+.post-image-container {
+  position: relative;
+}
+
+.image-slider {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+}
+
+.image-slider img {
+  min-width: 100%;
+  scroll-snap-align: start;
+  object-fit: cover;
+}
+
+.image-count {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 12px;
+}

@@ -1,0 +1,14 @@
+.home-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin: auto;
+}
+
+.feed {
+    flex: 1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

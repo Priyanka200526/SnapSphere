@@ -1,0 +1,49 @@
+.left-sidebar {
+    width: 220px;
+    padding: 20px 16px;
+    border-right: 1px solid #e5e7eb;
+    background: #fafafa;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+}
+
+/* menu item */
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #374151;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* icon size */
+
+.menu-item svg {
+    font-size: 20px;
+}
+
+/* hover */
+
+.menu-item:hover {
+    background: #f3f4f6;
+    color: #2563eb;
+}
+
+/* active route */
+
+.menu-item.active {
+    background: #e8f0fe;
+    color: #2563eb;
+    font-weight: 600;
+}
