@@ -13,11 +13,10 @@ export const handleApi = async ({
         if (data?.success === false) {
             const message = data.message || errorMessage
 
-            if (setErrors) {
-                setErrors({ api: message })
-            }
+            setErrors?.({ api: message })
+            toast.error(message)
 
-            return null
+            throw new Error(message)   // 🔥 IMPORTANT
         }
 
         if (onSuccess) {

@@ -9,13 +9,14 @@ import { handleApi } from '../../shared/utils/apihandler'
 export const useAuth = () => {
     const { user, setUser, loading, setLoading, errors, setErrors } = useContext(AuthContext)
 
-    // 🔥 Get current user
     const handleGetme = async () => {
         try {
             const data = await getme()
             setUser(data.user)
         } catch (error) {
-            setUser(null)
+            if (error?.response?.status === 401) {
+                setUser(null)   // ✅ expected
+            }
         } finally {
             setLoading(false)
         }
@@ -84,14 +85,13 @@ export const useAuth = () => {
             }
         })
     }
-
-    // 🔥 Auto run
     useEffect(() => {
         handleGetme()
     }, [])
 
     return {
         user,
+        setUser,
         loading,
         setLoading,
         errors,

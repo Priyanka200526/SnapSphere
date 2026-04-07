@@ -4,6 +4,6 @@ import { isLoggedIn } from "../middleware/IsLoggedIn.middleware.js";
 
 const otpRoutes = express.Router();
 
-otpRoutes.post("/verify-otp",isLoggedIn, verifyOTPAndRegister);
+otpRoutes.post("/verify-otp", verifyOTPAndRegister);
 
 export default otpRoutes;
