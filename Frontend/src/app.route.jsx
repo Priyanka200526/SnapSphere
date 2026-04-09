@@ -10,6 +10,7 @@ import PostDetails from './feature/post/pages/PostDetails'
 import Protected from './Componenet/Protected'
 import Public from './Componenet/Public'
 
+
 export const router = createBrowserRouter([
 
   // Public routes

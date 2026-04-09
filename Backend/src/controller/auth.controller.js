@@ -80,8 +80,7 @@ export const logoutController = asyncHandler(async (req, res) => {
     await redis.set(`personal:blacklist:${token}`, Date.now().toString(), "EX", 60 * 60);
     res.status(200).json({ message: "Logout successfully" });
 });
-// this api gives user details and current user posts
-export const getMe = asyncHandler(async (req, res, next) => {
+export const getCurrentUser = asyncHandler(async (req, res, next) => {
     const userId = req.user.id;
 
     const user = await authModel.findById(userId).lean();
@@ -90,20 +89,13 @@ export const getMe = asyncHandler(async (req, res, next) => {
         return next(new AppError("User not found", 404));
     }
 
-    const posts = await postModel
-        .find({ user: userId })
-        .populate("user", "username profileImage")
-        .sort({ createdAt: -1 });
-
     res.status(200).json({
         success: true,
         user: {
             ...user,
-            posts
         }
     });
 });
-// this api also gives cureent user post details 
 export const updateProfile = asyncHandler(async (req, res, next) => {
     const userId = req.user.id;
     const { username, bio } = req.body;
@@ -129,18 +121,10 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
 
     await user.save();
 
-    // 🔥 Add posts here
-    const posts = await postModel
-        .find({ user: userId })
-        .populate("user", "username profileImage")
-        .sort({ createdAt: -1 })
-        .lean();
-
     res.status(200).json({
         success: true,
         user: {
             ...user.toObject(),
-            posts
         }
     });
 });

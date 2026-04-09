@@ -23,8 +23,8 @@ export async function login({ email, password }) {
     })
     return res.data
 }
-export async function getme() {
-    const res = await api.get("/auth/getme")
+export async function getCurrentUser() {
+    const res = await api.get("/auth/getCurrentUser")
     return res.data
 }
 export async function logout() {
@@ -32,7 +32,7 @@ export async function logout() {
     return res.data
 }
 export async function updateProfileApi(formData) {
-    const res = await api.put("/auth/update-profile", formData, {
+    const res = await api.put("/auth/updateprofile", formData, {
         withCredentials: true,
     });
     return res.data;

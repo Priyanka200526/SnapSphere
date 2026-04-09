@@ -3,6 +3,7 @@ import likeModel from "../model/like.model.js";
 import Imagekit, { toFile } from "@imagekit/nodejs";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
+import { addLikeInfoToPosts } from "../utils/addLikeInfoToPosts.js";
 
 const imagekit = new Imagekit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -10,14 +11,12 @@ const imagekit = new Imagekit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 })
 
-export const createpostcontroller = asyncHandler(async (req, res, next) => {
+export const createPost = asyncHandler(async (req, res, next) => {
 
-  // ✅ 1. files check
   if (!req.files || req.files.length === 0) {
     return next(new AppError("At least one image is required", 400));
   }
 
-  // ✅ 2. upload all images
   const imageUrls = [];
 
   for (const file of req.files) {
@@ -30,31 +29,30 @@ export const createpostcontroller = asyncHandler(async (req, res, next) => {
     imageUrls.push(uploaded.url);
   }
 
-  // ✅ 3. create post
   const post = await postModel.create({
     caption: req.body.caption,
-    images: imageUrls,   // 🔥 change here
+    images: imageUrls,
     user: req.user.id
   });
 
   res.status(201).json({
-    status: "success",
+    status: true,
     message: "Post created successfully",
-    post
+    data: post
   });
 });
-export const getPostController = asyncHandler(async (req, res, next) => {
+export const getUserPosts = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
 
-  const posts = await postModel.find({
-    user: req.user.id
-  })
+  const posts = await postModel.find({ user: userId }).lean();
+
+  const updatedPosts = await addLikeInfoToPosts(posts, userId);
 
   res.status(200).json({
-    status: "success",
-    results: posts.length,
-    posts
-  })
-})
+    status: true,
+    posts: updatedPosts,
+  });
+});
 export const getPostDetailsController = asyncHandler(async (req, res, next) => {
 
   const userid = req.user.id;
@@ -68,15 +66,10 @@ export const getPostDetailsController = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  const isvalidateuser = postdetails.user._id.toString() === userid;
-
-  if (!isvalidateuser) {
-    return next(new AppError("Forbidden Content", 403));
-  }
-
   res.status(200).json({
-    status: "success",
-    postdetails
+    status: true,
+    message: "post details feched successfully",
+    data: postdetails
   });
 
 });
@@ -106,13 +99,13 @@ export const likePostController = asyncHandler(async (req, res, next) => {
   })
 
   res.status(201).json({
-    status: "success",
+    status: true,
     message: "Post liked successfully",
-    likepost
+    data: likepost
   })
 
 })
-export const UnlikePostController = asyncHandler(async (req, res, next) => {
+export const unlikePost = asyncHandler(async (req, res, next) => {
 
   const userid = req.user.id
   const postid = req.params.postid
@@ -138,30 +131,20 @@ export const UnlikePostController = asyncHandler(async (req, res, next) => {
   })
 
   res.status(200).json({
-    status: "success",
+    status: true,
     message: "Post unliked successfully"
   })
 
 })
-export const getFeedController = asyncHandler(async (req, res) => {
+export const getFeed = asyncHandler(async (req, res) => {
   const userId = req.user.id;
+
   const allPosts = await postModel.find({}).populate("user").lean();
 
-  const posts = await Promise.all(
-    allPosts.map(async (post) => {
-      const isLiked = await likeModel.findOne({ user: userId, post: post._id });
-      const likesCount = await likeModel.countDocuments({ post: post._id });
-
-      return {
-        ...post,
-        isLiked: Boolean(isLiked),
-        likesCount
-      };
-    })
-  );
+  const posts = await addLikeInfoToPosts(allPosts, userId);
 
   res.status(200).json({
-    message: "Posts fetched successfully.",
-    posts
+    status: true,
+    data: posts,
   });
 });

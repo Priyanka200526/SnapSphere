@@ -5,6 +5,7 @@ $secondary: #ff758f;
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
+  background: #fafafa;
 }
 
 /* 🔥 PROFILE SECTION */
@@ -15,15 +16,22 @@ $secondary: #ff758f;
   margin-bottom: 30px;
 }
 
+/* PROFILE IMAGE */
 .profile-pic-section {
   .profile-img {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
+
+    /* 🔥 glow effect */
+    border: 3px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, $primary, $secondary) border-box;
   }
 }
 
+/* INFO */
 .profile-info {
   display: flex;
   flex-direction: column;
@@ -31,34 +39,41 @@ $secondary: #ff758f;
 
   h2 {
     font-size: 22px;
+    font-weight: 600;
   }
 
   p {
     font-size: 14px;
-    color: #555;
+    color: #666;
   }
 
   .stats {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     font-size: 14px;
+
+    div {
+      text-align: center;
+
+      b {
+        display: block;
+        font-size: 16px;
+      }
+    }
   }
 
+  /* BUTTON */
   .edit-btn {
     width: fit-content;
-    padding: 6px 12px;
-    border-radius: 10px;
+    padding: 6px 14px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
-    font-size: 0.90rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    letter-spacing: 0.5px;
     background: linear-gradient(135deg, $primary, $secondary);
     color: white;
     transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     &:hover {
       transform: translateY(-2px);
@@ -69,12 +84,11 @@ $secondary: #ff758f;
       transform: scale(0.97);
     }
   }
-
 }
 
 /* 🔥 POSTS */
 .posts-section {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #eee;
   padding-top: 15px;
 }
 
@@ -88,45 +102,55 @@ $secondary: #ff758f;
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
+  gap: 8px;
 }
 
+/* 🔥 CARD STYLE */
 .post-item {
-  width: 100%;
-  aspect-ratio: 1/1;
-  overflow: hidden;
-  cursor: pointer;
   position: relative;
-  background: #f0f0f0;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 10px; // 🔥 rounded
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
+/* IMAGE */
+.post-item img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
 
-  &:hover img {
-    transform: scale(1.05);
-  }
+/* 🔥 HOVER EFFECT */
+.post-item:hover img {
+  transform: scale(1.08);
+  filter: brightness(0.85);
+}
 
-  /* 🔥 hover overlay */
-  &::after {
-    content: "View";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: 0.3s ease;
-  }
+/* 🔥 DARK OVERLAY ON HOVER */
+.post-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: 0.3s;
+}
 
-  &:hover::after {
-    opacity: 1;
-  }
+.post-item:hover::after {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* 🔥 OVERLAY COUNT (better UI) */
+.overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px); // 🔥 glass effect
 }
 
 /* 🔥 RESPONSIVE */
@@ -140,6 +164,8 @@ $secondary: #ff758f;
   .posts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .post-item img {
+    height: 110px;
+  }
 }
-
-

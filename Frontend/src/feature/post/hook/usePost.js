@@ -1,4 +1,4 @@
-import { createPost, likePost, unLikePost, getPostDetails, getFeedPosts } from "../services/post.api"
+import { createPost, likePost, unLikePost, getPostDetails, getFeed, getUserPosts } from "../services/post.api"
 import { useContext, useEffect } from "react"
 import { PostContext } from "../context/post.context"
 
@@ -15,8 +15,10 @@ export const usePost = () => {
     const handleGetFeed = async () => {
         try {
             setLoading(true)
-            const data = await getFeedPosts()
-            setFeed([...data.posts].reverse())
+            const data = await getFeed()
+            console.log(data)
+            setFeed([...(data.data || [])].reverse())
+
         } catch (error) {
             console.error(error)
         } finally {
@@ -49,6 +51,17 @@ export const usePost = () => {
         }
     }
 
+    const handleGetUserPosts = async () => {
+        try {
+            setLoading(true)
+            const data = await getUserPosts()
+            setPost(data.posts || [])
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
     const handleLike = async (postId) => {
         await likePost(postId)
 
@@ -96,21 +109,9 @@ export const usePost = () => {
             setLoading(false);
         }
     };
-    const handleGetFeedPosts = async () => {
-        try {
-            setLoading(true);
-            const data = await getFeedPosts();
-            return data;
-        } catch (error) {
-            console.error("Feed Posts Error:", error);
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
-        handleGetFeedPosts
+        handleGetFeed()
     }, [])
 
     return {
@@ -119,9 +120,9 @@ export const usePost = () => {
         post,
         handleGetFeed,
         handleCreatePost,
+        handleGetUserPosts,
         handleLike,
         handleUnLike,
         handleGetPostDetails,
-        handleGetFeedPosts
     }
 }

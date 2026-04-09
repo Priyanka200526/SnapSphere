@@ -45,16 +45,19 @@
 .post-image-wrapper {
   position: relative;
 }
-
 /* 🔥 Counter (top right) */
 .image-count {
   position: absolute;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
   top: 10px;
   right: 10px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
+  color: rgb(255, 255, 255);
+  background: transparent;
   font-size: 12px;
   z-index: 10;
 }

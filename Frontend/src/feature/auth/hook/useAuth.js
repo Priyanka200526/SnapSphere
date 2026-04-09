@@ -1,17 +1,16 @@
 import { useContext, useEffect } from 'react'
 import { AuthContext } from '../context/auth.context'
 import {
-    login, register, getme, logout, verifyUser, updateProfileApi
+    login, register, getCurrentUser, logout, verifyUser, updateProfileApi
 } from '../services/auth.api'
-
 import { handleApi } from '../../shared/utils/apihandler'
 
 export const useAuth = () => {
     const { user, setUser, loading, setLoading, errors, setErrors } = useContext(AuthContext)
 
-    const handleGetme = async () => {
+    const handlegetCurrentUser = async () => {
         try {
-            const data = await getme()
+            const data = await getCurrentUser()
             setUser(data.user)
         } catch (error) {
             if (error?.response?.status === 401) {
@@ -86,7 +85,7 @@ export const useAuth = () => {
         })
     }
     useEffect(() => {
-        handleGetme()
+        handlegetCurrentUser()
     }, [])
 
     return {

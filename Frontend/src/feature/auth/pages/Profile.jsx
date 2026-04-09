@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../../Componenet/Pageheader";
 import ProfileEdit from "./ProfileEdit";
 import "../style/profile.scss";
+import { usePost } from "../../post/hook/usePost"
 
 const Profile = () => {
-  const { user, loading,handleUpdateProfile,setUser } = useAuth();
+  const { user, loading, handleUpdateProfile, setUser } = useAuth();
+  const { post, handleGetUserPosts } = usePost()
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    handleGetUserPosts()
+  }, [])
 
   if (loading) return <div className="loader">Loading...</div>;
   if (!user) return <div>Please login first</div>;
@@ -21,8 +27,8 @@ const Profile = () => {
         <ProfileEdit
           user={user}
           setIsEditing={setIsEditing}
-          handleUpdateProfile={handleUpdateProfile} 
-          setUser={setUser}                         
+          handleUpdateProfile={handleUpdateProfile}
+          setUser={setUser}
         />
       ) : (
         <>
@@ -41,7 +47,7 @@ const Profile = () => {
               <p>{user.bio || "Web Developer 🚀"}</p>
 
               <div className="stats">
-                <div><b>{user.posts?.length || 0}</b> Posts</div>
+                <div><b>{user.post?.length || 0}</b> Posts</div>
                 <div><b>{user.followers || 0}</b> Followers</div>
                 <div><b>{user.following || 0}</b> Following</div>
               </div>
@@ -56,26 +62,24 @@ const Profile = () => {
           </div>
 
           {/* 🔥 POSTS SECTION */}
+
           <div className="posts-section">
-            {user.posts?.length > 0 ? (
+            {post?.length > 0 ? (
               <div className="posts-grid">
-                {user.posts.map((post) => (
+                {post.map((p) => (
                   <div
-                    key={post._id}
+                    key={p._id}
                     className="post-item"
-                    onClick={() => {
-                      console.log("CLICKED:", post._id); // 🔥 debug
-                      navigate(`/post/${post._id}`);
-                    }}
-                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/post/${p._id}`)}
                   >
-                    <img
-                      src={
-                        post.images?.[0] ||
-                        "https://via.placeholder.com/300"
-                      }
-                      alt="post"
-                    />
+                    <img src={p.images?.[0]} alt="post" />
+
+                    {/* 🔥 FIXED overlay */}
+                    {p.images?.length > 1 && (
+                      <div className="overlay">
+                        <span>1 / {p.images.length}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

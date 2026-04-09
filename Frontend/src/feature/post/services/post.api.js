@@ -17,7 +17,7 @@ export async function createPost(formData) {
     return res.data;
 }
 
-export const getPosts = async () => {
+export const getUserPosts = async () => {
     const res = await api.get("/")
     return res.data
 }
@@ -35,8 +35,4 @@ export const likePost = async (postid) => {
 export const unLikePost = async (postid) => {
     const res = await api.delete(`/unlike/${postid}`)
     return res.data
-}
-export async function getFeedPosts() {
-    const response = await api.get('/feed')
-    return response.data
 }
