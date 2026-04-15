@@ -5,7 +5,6 @@ import path from "path";
 
 const uploadDir = path.join(process.cwd(), "uploads");
 
-// agar folder nahi hai, create karo
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
@@ -20,6 +19,6 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({
-    storage: multer.memoryStorage(), // file buffer ke liye
-    limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+    storage: multer.memoryStorage(), 
+    limits: { fileSize: 5 * 1024 * 1024 }, 
 });

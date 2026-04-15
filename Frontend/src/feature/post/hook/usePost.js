@@ -1,6 +1,8 @@
-import { createPost, likePost, unLikePost, getPostDetails, getFeed, getUserPosts } from "../services/post.api"
+import { createPost, getPostDetails, getFeed, getUserPosts, deletePostApi, toggleLikePost } from "../services/post.api"
 import { useContext, useEffect } from "react"
 import { PostContext } from "../context/post.context"
+import { useState } from "react"
+
 
 export const usePost = () => {
 
@@ -11,6 +13,7 @@ export const usePost = () => {
     }
 
     const { loading, setLoading, post, setPost, feed, setFeed } = context
+    const [postsCount, setPostsCount] = useState(0);
 
     const handleGetFeed = async () => {
         try {
@@ -30,7 +33,7 @@ export const usePost = () => {
         try {
             setLoading(true)
 
-            const data = await createPost(formData) // 🔥 direct formData
+            const data = await createPost(formData) 
 
             setFeed((prev) => [
                 {
@@ -50,53 +53,62 @@ export const usePost = () => {
             setLoading(false)
         }
     }
+    const handleDeletePost = async (postId) => {
+        try {
+            setLoading(true);
 
+            const data = await deletePostApi(postId);
+
+            setFeed((prev) =>
+                prev?.filter((post) => post._id !== postId)
+            );
+
+            return data;
+
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
     const handleGetUserPosts = async () => {
         try {
-            setLoading(true)
-            const data = await getUserPosts()
-            setPost(data.posts || [])
+            setLoading(true);
+
+            const data = await getUserPosts();
+
+            setPost(data.posts || []);
+            setPostsCount(data.postsCount || 0); 
+
         } catch (error) {
-            console.error(error)
+            console.error(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
-    const handleLike = async (postId) => {
-        await likePost(postId)
-
-        setFeed((prev) =>
-            prev.map((p) =>
-                p._id === postId
-                    ? {
-                        ...p,
-                        isLiked: true,
-                        likesCount: (p.likesCount || 0) + 1
-                    }
-                    : p
-            )
-        )
-    }
-
-    const handleUnLike = async (postId) => {
+    };
+    const handleToggleLike = async (postId, isLiked) => {
         try {
-            await unLikePost(postId)
+            const res = await toggleLikePost(postId);
+
             setFeed((prev) =>
                 prev.map((p) =>
                     p._id === postId
                         ? {
                             ...p,
-                            isLiked: false,
-                            likesCount: Math.max((p.likesCount || 1) - 1, 0)
+                            isLiked: res.liked,
+                            likesCount: res.liked
+                                ? p.likesCount + 1
+                                : p.likesCount - 1,
                         }
                         : p
                 )
-            )
-            await handleGetFeed()
-        } catch (error) {
-            console.error(error)
+            );
+        } catch (err) {
+            console.log(err);
         }
-    }
+    };
+
     const handleGetPostDetails = async (postid) => {
         try {
             setLoading(true);
@@ -118,11 +130,12 @@ export const usePost = () => {
         loading,
         feed,
         post,
+        postsCount, // 🔥 add this
         handleGetFeed,
         handleCreatePost,
         handleGetUserPosts,
-        handleLike,
-        handleUnLike,
+        handleToggleLike,
         handleGetPostDetails,
+        handleDeletePost
     }
 }

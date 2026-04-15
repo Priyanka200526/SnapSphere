@@ -18,7 +18,7 @@ const ProfileEdit = ({ user, setIsEditing, handleUpdateProfile, setUser }) => {
     const file = e.target.files[0];
     if (file) {
       setFormData({ ...formData, profilePicFile: file });
-      setPreview(URL.createObjectURL(file)); // 🔥 live preview
+      setPreview(URL.createObjectURL(file));
     }
   };
 

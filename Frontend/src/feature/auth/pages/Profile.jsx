@@ -5,10 +5,12 @@ import PageHeader from "../../../Componenet/Pageheader";
 import ProfileEdit from "./ProfileEdit";
 import "../style/profile.scss";
 import { usePost } from "../../post/hook/usePost"
+import { usefollow } from "../../follow/hook/usefollow";
 
 const Profile = () => {
   const { user, loading, handleUpdateProfile, setUser } = useAuth();
-  const { post, handleGetUserPosts } = usePost()
+  const { post,postsCount, handleGetUserPosts } = usePost()
+  const {followStats}= usefollow()
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
@@ -21,7 +23,7 @@ const Profile = () => {
 
   return (
     <div className="profile-page">
-      <PageHeader title="Profile" />
+      <PageHeader />
 
       {isEditing ? (
         <ProfileEdit
@@ -32,7 +34,7 @@ const Profile = () => {
         />
       ) : (
         <>
-          {/* 🔥 PROFILE INFO */}
+          {/* PROFILE INFO */}
           <div className="profile-view">
             <div className="profile-pic-section">
               <img
@@ -47,9 +49,9 @@ const Profile = () => {
               <p>{user.bio || "Web Developer 🚀"}</p>
 
               <div className="stats">
-                <div><b>{user.post?.length || 0}</b> Posts</div>
-                <div><b>{user.followers || 0}</b> Followers</div>
-                <div><b>{user.following || 0}</b> Following</div>
+                <div><b>{postsCount}</b> Posts</div>
+                <div><b>{followStats.followers}</b> Followers</div>
+                <div><b>{followStats.following}</b> Following</div>
               </div>
 
               <button
@@ -61,7 +63,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* 🔥 POSTS SECTION */}
+          {/* POSTS SECTION */}
 
           <div className="posts-section">
             {post?.length > 0 ? (
@@ -74,7 +76,7 @@ const Profile = () => {
                   >
                     <img src={p.images?.[0]} alt="post" />
 
-                    {/* 🔥 FIXED overlay */}
+                    {/* FIXED overlay */}
                     {p.images?.length > 1 && (
                       <div className="overlay">
                         <span>1 / {p.images.length}</span>

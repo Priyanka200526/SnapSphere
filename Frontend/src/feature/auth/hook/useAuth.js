@@ -14,14 +14,14 @@ export const useAuth = () => {
             setUser(data.user)
         } catch (error) {
             if (error?.response?.status === 401) {
-                setUser(null)   // ✅ expected
+                setUser(null) 
             }
         } finally {
             setLoading(false)
         }
     }
 
-    // 🔥 Register
+    //  Register
     const handleRegister = async (formData) => {
         return handleApi({
             apiCall: () => register(formData),
@@ -31,7 +31,7 @@ export const useAuth = () => {
         })
     }
 
-    // 🔥 Verify OTP
+    //  Verify OTP
     const handleVerifyUser = async (formData) => {
         return handleApi({
             apiCall: () => verifyUser(formData),
@@ -44,7 +44,7 @@ export const useAuth = () => {
         })
     }
 
-    // 🔥 Login
+    //  Login
     const handleLogin = async (formData) => {
         return handleApi({
             apiCall: () => login(formData),
@@ -59,7 +59,7 @@ export const useAuth = () => {
         })
     }
 
-    // 🔥 Logout
+    //  Logout
     const handleLogout = async () => {
         return handleApi({
             apiCall: () => logout(),
@@ -71,7 +71,7 @@ export const useAuth = () => {
         })
     }
 
-    // 🔥 Update Profile
+    //  Update Profile
     const handleUpdateProfile = async (formData) => {
         return handleApi({
             apiCall: () => updateProfileApi(formData),

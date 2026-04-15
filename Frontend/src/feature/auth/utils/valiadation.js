@@ -1,7 +1,6 @@
 export function validateFields(fields) {
     let errors = {}
 
-    // EMAIL
     if ("email" in fields) {
         if (!fields.email) {
             errors.email = "Email is required"
@@ -10,14 +9,12 @@ export function validateFields(fields) {
         }
     }
 
-    // OTP
     if ("otp" in fields) {
         if (!fields.otp) {
             errors.otp = "OTP is required"
         }
     }
-
-    // USERNAME (only if exists)
+    
     if ("username" in fields) {
         if (!fields.username) {
             errors.username = "Username is required"
@@ -26,7 +23,7 @@ export function validateFields(fields) {
         }
     }
 
-    // PASSWORD (only if exists)
+ 
     if ("password" in fields) {
         if (!fields.password) {
             errors.password = "Password is required"

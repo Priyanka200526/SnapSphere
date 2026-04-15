@@ -34,7 +34,7 @@ export const sendOTP = async (email, username, password) => {
                 password
             }),
             "EX",
-            300 // 5 min expiry
+            300 
         );
 
         await sendEmail({
@@ -52,16 +52,12 @@ export const sendOTP = async (email, username, password) => {
 };
 export const verifyOTPAndRegister = asyncHandler(async (req, res, next) => {
     const { email, otp } = req.body;
-
-    // 🔹 Step 1: Redis se data lao
     const data = await redis.get(`otp:${email}`);
 
     if (!data) {
         await redis.del(`otp_attempts:${email}`);
         return next(new AppError("OTP expired", 400));
     }
-
-    // 🔹 Step 2: JSON parse karo
     const parsedData = JSON.parse(data);
 
     const { otp: hashedOTP, username, password } = parsedData;
@@ -84,14 +80,11 @@ export const verifyOTPAndRegister = asyncHandler(async (req, res, next) => {
     }
     await redis.del(`otp_attempts:${email}`);
 
-    // 🔹 Step 4: Check user already exist
     const existingUser = await authModel.findOne({ email });
 
     if (existingUser) {
         return next(new AppError("User already exists", 409));
     }
-
-    // 🔹 Step 5: User create karo
     const user = await authModel.create({
         username,
         email,
@@ -99,17 +92,14 @@ export const verifyOTPAndRegister = asyncHandler(async (req, res, next) => {
         isVerified: true
     });
 
-    // 🔹 Step 6: Redis se OTP delete karo (optional but good)
     await redis.del(`otp:${email}`);
 
-    // 🔹 Step 7: Welcome email
     await sendEmail({
         to: user.email,
         subject: "Welcome to SnapSphere 🎉",
         html: welcomeTemplate(user.username)
     });
 
-    // 🔹 Step 8: Token generate
     const token = generateToken(user._id);
 
     res.cookie("token", token, {

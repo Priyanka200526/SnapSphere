@@ -5,7 +5,6 @@ import redis from "../config/cache.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import ImageKit from "imagekit";
-import postModel from "../model/post.model.js";
 
 const imagekit = new ImageKit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -47,7 +46,7 @@ export const loginController = asyncHandler(async (req, res, next) => {
 
     const user = await authModel
         .findOne({ email: email.toLowerCase() })
-        .select("+password"); // ✅ important
+        .select("+password"); 
 
     if (!user) return next(new AppError("Invalid email or password", 401));
     if (!user.isVerified) return next(new AppError("Please verify your account first", 401));

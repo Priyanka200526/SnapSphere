@@ -8,19 +8,14 @@ import {
   FiMoreHorizontal
 } from "react-icons/fi";
 
-const PostCard = ({ user, post, handleLike, handleUnLike }) => {
+const PostCard = ({ user, post, handleToggleLike }) => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleLikeClick = () => {
-    if (post?.isLiked) {
-      handleUnLike(post?._id);
-    } else {
-      handleLike(post?._id);
-    }
-  };
+const handleLikeClick = () => {
+  handleToggleLike(post?._id, post?.isLiked);
+};
 
-  // 🔥 scroll tracking
   const handleScroll = (e) => {
     const scrollLeft = e.target.scrollLeft;
     const width = e.target.clientWidth;
@@ -31,7 +26,7 @@ const PostCard = ({ user, post, handleLike, handleUnLike }) => {
   return (
     <div className="post-card">
 
-      {/* Header */}
+
       <div className="post-header">
         <div className="user-info">
           <img
@@ -47,15 +42,12 @@ const PostCard = ({ user, post, handleLike, handleUnLike }) => {
         </button>
       </div>
 
-      {/* 🔥 Image Section */}
       <div className="post-image-wrapper">
 
-        {/* Counter */}
         <div className="image-count">
           {currentIndex + 1} / {post?.images?.length}
         </div>
 
-        {/* Scroll images */}
         <div className="post-image-scroll" onScroll={handleScroll}>
           {post?.images?.map((img, i) => (
             <img key={i} src={img} alt="post" />
@@ -64,7 +56,7 @@ const PostCard = ({ user, post, handleLike, handleUnLike }) => {
 
       </div>
 
-      {/* Actions */}
+
       <div className="post-actions">
         <div className="left-actions">
 
@@ -87,12 +79,11 @@ const PostCard = ({ user, post, handleLike, handleUnLike }) => {
         </button>
       </div>
 
-      {/* Likes */}
       <div className="post-likes">
         {post?.likesCount || 0} likes
       </div>
 
-      {/* Caption */}
+
       <div className="post-caption">
         <span className="username">{user?.username}</span>
         <span className="caption-text"> {post?.caption}</span>

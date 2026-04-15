@@ -41,11 +41,11 @@
   cursor: pointer;
 }
 
-/* 🔥 IMAGE WRAPPER */
+/* IMAGE WRAPPER */
 .post-image-wrapper {
   position: relative;
 }
-/* 🔥 Counter (top right) */
+/* Counter (top right) */
 .image-count {
   position: absolute;
   width: 45px;
@@ -62,7 +62,7 @@
   z-index: 10;
 }
 
-/* 🔥 Scroll slider */
+/* Scroll slider */
 .post-image-scroll {
   display: flex;
   overflow-x: auto;

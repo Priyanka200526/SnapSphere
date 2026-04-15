@@ -16,7 +16,7 @@ export const handleApi = async ({
             setErrors?.({ api: message })
             toast.error(message)
 
-            throw new Error(message)   // 🔥 IMPORTANT
+            throw new Error(message)   
         }
 
         if (onSuccess) {

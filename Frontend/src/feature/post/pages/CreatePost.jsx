@@ -3,6 +3,7 @@ import "../style/createpost.scss";
 import { usePost } from "../hook/usePost";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import BackButton from "../../../Componenet/Pageheader";
 
 const CreatePost = () => {
   const [caption, setCaption] = useState("");
@@ -84,14 +85,14 @@ const CreatePost = () => {
   }
 
   return (
+   <>
+   <BackButton/>
     <main className="create-post-page">
       <div className="form-container">
 
         <h1>Create Post</h1>
 
         <form onSubmit={handleSubmit}>
-
-          {/* 🔥 Upload Box */}
           <div
             className={`drop-area ${dragActive ? "active" : ""}`}
             onDrop={handleDrop}
@@ -111,7 +112,6 @@ const CreatePost = () => {
             onChange={handleImageChange}
           />
 
-          {/* 🔥 Preview */}
           {images.length > 0 && (
             <div className="preview-grid">
               {images.map((img, index) => (
@@ -125,7 +125,6 @@ const CreatePost = () => {
             </div>
           )}
 
-          {/* 🔥 Caption */}
           <textarea
             className="caption-input"
             value={caption}
@@ -141,6 +140,7 @@ const CreatePost = () => {
         </form>
       </div>
     </main>
+   </>
   );
 };
 

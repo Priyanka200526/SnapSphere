@@ -1,16 +1,18 @@
 import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/auth.context'
+import { AuthContext } from '../../auth/context/auth.context'
 import {
     followUserApi,
     unfollowUserApi, getFollowStatsApi
 } from '../service/follow.api'
-export const useAuth = () => {
+export const usefollow = () => {
     const context = useContext(AuthContext)
     const { errors, setErrors } = context
+
     const [followStats, setFollowStats] = useState({
         followers: 0,
         following: 0
     });
+
     async function handleFollowStats() {
         try {
             const data = await getFollowStatsApi();
@@ -25,7 +27,7 @@ export const useAuth = () => {
     async function handleFollow(userId) {
         try {
             await followUserApi(userId);
-            await handleFollowStats(); // refresh count
+            await handleFollowStats(); 
         } catch (err) {
             alert(err.response?.data?.message || "Follow failed");
         }

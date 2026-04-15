@@ -1,57 +1,76 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../style/rightsidebar.scss";
+import { useAuth } from "../../auth/hook/useAuth"; // adjust path
+import { useNavigate } from "react-router-dom";
 
 const Rightsidebar = () => {
+  const { user, handlegetCurrentUser, loading } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      handlegetCurrentUser();
+    }
+  }, []);
+
+  const navigate = useNavigate();
+  if (loading) {
+    return <p>Loading sidebar...</p>;
+  }
   return (
     <aside className="right-sidebar">
 
       {/* Current User */}
-      <div className="current-user">
-        <img src="https://i.pravatar.cc/40?img=5" alt="Priyanka" />
+      <div className="current-user card">
         <div className="user-info">
-          <p className="username">Priyanka</p>
-          <span className="subtext">Web Developer</span>
+          <img
+            src={user.profileImage || "https://via.placeholder.com/150"}
+            alt="Profile"
+            className="profile-img"
+          />
+          <p className="username">{user?.username || "Loading..."}</p>
+        </div>
+        <span className="subtext">
+          {user?.bio || "No bio available"}
+        </span>
+        <button className='button' onClick={() => navigate("/profile")}>Edit</button>
+      </div>
+
+      <div className="sidebar-card">
+        <h3 className="sidebar-title">Your Stats</h3>
+
+        <div className="stats">
+          <div>
+            <p className="stat-number">{user?.postsCount || 0}</p>
+            <span>Posts</span>
+          </div>
+          <div>
+            <p className="stat-number">{user?.followersCount || 0}</p>
+            <span>Followers</span>
+          </div>
+          <div>
+            <p className="stat-number">{user?.followingCount || 0}</p>
+            <span>Following</span>
+          </div>
         </div>
       </div>
 
-      {/* Suggested Users */}
-      <div className="sidebar-card">
 
+      <div className="sidebar-card">
         <div className="suggested-header">
           <h3 className="sidebar-title">Suggested for you</h3>
           <button className="see-all">See All</button>
         </div>
 
-        <div className="user">
-          <img src="https://i.pravatar.cc/40?img=1" alt="Rahul" />
-          <div className="user-info">
-            <p className="username">Rahul</p>
-            <span className="subtext">Suggested for you</span>
-          </div>
-          <button className="follow-btn">Follow</button>
-        </div>
 
-        <div className="user">
-          <img src="https://i.pravatar.cc/40?img=2" alt="Ankit" />
-          <div className="user-info">
-            <p className="username">Ankit</p>
-            <span className="subtext">Suggested for you</span>
-          </div>
-          <button className="follow-btn">Follow</button>
-        </div>
-
-        <div className="user">
-          <img src="https://i.pravatar.cc/40?img=3" alt="Sara" />
-          <div className="user-info">
-            <p className="username">Sara</p>
-            <span className="subtext">Suggested for you</span>
-          </div>
-          <button className="follow-btn">Follow</button>
-        </div>
-
+        <p className="empty-text">Suggestions coming soon...</p>
       </div>
 
-      {/* Footer */}
+      <div className="sidebar-card">
+        <h3 className="sidebar-title">Recent Activity</h3>
+        <p className="empty-text">No activity yet</p>
+      </div>
+
+
       <div className="sidebar-footer">
         <p>About • Help • Press • API • Jobs • Privacy</p>
         <p className="copyright">© 2026 Pixora</p>

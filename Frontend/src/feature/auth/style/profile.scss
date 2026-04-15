@@ -8,7 +8,7 @@ $secondary: #ff758f;
   background: #fafafa;
 }
 
-/* 🔥 PROFILE SECTION */
+/*  PROFILE SECTION */
 .profile-view {
   display: flex;
   align-items: center;
@@ -24,7 +24,7 @@ $secondary: #ff758f;
     border-radius: 50%;
     object-fit: cover;
 
-    /* 🔥 glow effect */
+    /*  glow effect */
     border: 3px solid transparent;
     background: linear-gradient(white, white) padding-box,
                 linear-gradient(135deg, $primary, $secondary) border-box;
@@ -86,7 +86,7 @@ $secondary: #ff758f;
   }
 }
 
-/* 🔥 POSTS */
+/*  POSTS */
 .posts-section {
   border-top: 1px solid #eee;
   padding-top: 15px;
@@ -98,19 +98,19 @@ $secondary: #ff758f;
   font-size: 14px;
 }
 
-/* 🔥 GRID */
+/*  GRID */
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
-/* 🔥 CARD STYLE */
+/*  CARD STYLE */
 .post-item {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  border-radius: 10px; // 🔥 rounded
+  border-radius: 10px; //  rounded
 }
 
 /* IMAGE */
@@ -121,13 +121,13 @@ $secondary: #ff758f;
   transition: all 0.3s ease;
 }
 
-/* 🔥 HOVER EFFECT */
+/*  HOVER EFFECT */
 .post-item:hover img {
   transform: scale(1.08);
   filter: brightness(0.85);
 }
 
-/* 🔥 DARK OVERLAY ON HOVER */
+/*  DARK OVERLAY ON HOVER */
 .post-item::after {
   content: "";
   position: absolute;
@@ -140,7 +140,7 @@ $secondary: #ff758f;
   background: rgba(0, 0, 0, 0.25);
 }
 
-/* 🔥 OVERLAY COUNT (better UI) */
+/*  OVERLAY COUNT (better UI) */
 .overlay {
   position: absolute;
   top: 8px;
@@ -150,10 +150,10 @@ $secondary: #ff758f;
   padding: 4px 8px;
   font-size: 11px;
   border-radius: 20px;
-  backdrop-filter: blur(4px); // 🔥 glass effect
+  backdrop-filter: blur(4px); //  glass effect
 }
 
-/* 🔥 RESPONSIVE */
+/*  RESPONSIVE */
 @media (max-width: 600px) {
   .profile-view {
     flex-direction: column;

@@ -15,13 +15,11 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      {/* Logo */}
       <div className="logo">
         <img src="/logo.png" alt="Pixora logo" className="logo-img" />
         <span>Pixora</span>
       </div>
 
-      {/* Search */}
       <div className="search-box">
         <FiSearch className="search-icon" />
 
@@ -31,7 +29,6 @@ const Navbar = () => {
         />
       </div>
 
-      {/* Actions */}
       <div className="nav-actions">
 
         <button

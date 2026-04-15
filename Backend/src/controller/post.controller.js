@@ -41,6 +41,35 @@ export const createPost = asyncHandler(async (req, res, next) => {
     data: post
   });
 });
+export const deletePost = asyncHandler(async (req, res, next) => {
+  const { postId } = req.params;
+  console.log("params:", req.params);
+
+  const post = await postModel.findById(postId);
+
+  if (!post) {
+    return next(new AppError("Post not found", 404));
+  }
+
+  if (post.user.toString() !== req.user.id) {
+    return next(new AppError("You are not allowed to delete this post", 403));
+  }
+  for (const imageUrl of post.images) {
+    try {
+      const fileId = imageUrl.split("/").pop().split(".")[0];
+      await imagekit.files.deleteFile(fileId);
+    } catch (err) {
+      console.log("Image delete failed:", err.message);
+    }
+  }
+
+  await post.deleteOne();
+
+  res.status(200).json({
+    status: true,
+    message: "Post deleted successfully"
+  });
+});
 export const getUserPosts = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
@@ -48,9 +77,12 @@ export const getUserPosts = asyncHandler(async (req, res) => {
 
   const updatedPosts = await addLikeInfoToPosts(posts, userId);
 
+  const postsCount = posts.length; 
+
   res.status(200).json({
     status: true,
     posts: updatedPosts,
+    postsCount, 
   });
 });
 export const getPostDetailsController = asyncHandler(async (req, res, next) => {
@@ -73,69 +105,44 @@ export const getPostDetailsController = asyncHandler(async (req, res, next) => {
   });
 
 });
-export const likePostController = asyncHandler(async (req, res, next) => {
+export const toggleLikePost = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const postId = req.params.postid;
 
-  const userid = req.user.id
-  const postid = req.params.postid
-
-  const post = await postModel.findById(postid)
-
+  const post = await postModel.findById(postId);
   if (!post) {
-    return next(new AppError("Post not found", 404))
+    return next(new AppError("Post not found", 404));
   }
 
-  const alreadyLiked = await likeModel.findOne({
-    user: userid,
-    post: postid
-  })
+  const existingLike = await likeModel.findOne({
+    user: userId,
+    post: postId,
+  });
 
-  if (alreadyLiked) {
-    return next(new AppError("Post already liked", 400))
+  if (existingLike) {
+
+    await likeModel.deleteOne({ _id: existingLike._id });
+
+    return res.status(200).json({
+      status: true,
+      message: "Post unliked",
+      liked: false,
+    });
+  } else {
+
+    const newLike = await likeModel.create({
+      user: userId,
+      post: postId,
+    });
+
+    return res.status(201).json({
+      status: true,
+      message: "Post liked",
+      liked: true,
+      data: newLike,
+    });
   }
-
-  const likepost = await likeModel.create({
-    post: postid,
-    user: userid
-  })
-
-  res.status(201).json({
-    status: true,
-    message: "Post liked successfully",
-    data: likepost
-  })
-
-})
-export const unlikePost = asyncHandler(async (req, res, next) => {
-
-  const userid = req.user.id
-  const postid = req.params.postid
-
-  const post = await postModel.findById(postid)
-
-  if (!post) {
-    return next(new AppError("Post not found", 404))
-  }
-
-  const isliked = await likeModel.findOne({
-    user: userid,
-    post: postid
-  })
-
-  if (!isliked) {
-    return next(new AppError("Post not liked yet", 400))
-  }
-
-  await likeModel.deleteOne({
-    user: userid,
-    post: postid
-  })
-
-  res.status(200).json({
-    status: true,
-    message: "Post unliked successfully"
-  })
-
-})
+});
 export const getFeed = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
