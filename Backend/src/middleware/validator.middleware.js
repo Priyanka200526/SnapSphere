@@ -10,6 +10,5 @@ export const validate = (req, res, next) => {
             message: errors.array()[0].msg
         })
     }
-
     next();
 };

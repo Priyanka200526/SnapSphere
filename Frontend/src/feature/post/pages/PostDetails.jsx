@@ -7,7 +7,7 @@ import BackButton from "../../../Componenet/Pageheader";
 
 const PostDetails = () => {
   const { postid } = useParams();
-  const { handleGetPostDetails, handleDeletePost, loading } = usePost();
+  const { handleGetPostDetails, handleDeletePost, loading,handleToggleLike } = usePost();
 
   const [post, setPost] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
@@ -15,6 +15,10 @@ const PostDetails = () => {
 
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleLikeClick = () => {
+  handleToggleLike(post?._id, post?.isLiked);
+};
 
   const navigate = useNavigate();
 
@@ -102,7 +106,7 @@ const PostDetails = () => {
 
       <div className="content">
         <p><b>{post.user?.username}</b> {post.caption}</p>
-        <p className="likes">{post.likesCount} likes</p>
+        <p><b>{post?.likesCount || 0} likes</b></p>
         <p className="date">
           {new Date(post.createdAt).toLocaleDateString()}
         </p>

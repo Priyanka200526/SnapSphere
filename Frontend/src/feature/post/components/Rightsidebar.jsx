@@ -2,14 +2,19 @@ import React, { useEffect } from "react";
 import "../style/rightsidebar.scss";
 import { useAuth } from "../../auth/hook/useAuth"; // adjust path
 import { useNavigate } from "react-router-dom";
+import { usePost } from "../hook/usePost";
+import { usefollow } from "../../follow/hook/usefollow";
 
 const Rightsidebar = () => {
   const { user, handlegetCurrentUser, loading } = useAuth();
+  const { post, postsCount, handleGetUserPosts } = usePost()
+  const { followStats } = usefollow()
 
   useEffect(() => {
     if (!user) {
       handlegetCurrentUser();
     }
+    handleGetUserPosts()
   }, []);
 
   const navigate = useNavigate();
@@ -40,15 +45,15 @@ const Rightsidebar = () => {
 
         <div className="stats">
           <div>
-            <p className="stat-number">{user?.postsCount || 0}</p>
+            <p className="stat-number">{postsCount}</p>
             <span>Posts</span>
           </div>
           <div>
-            <p className="stat-number">{user?.followersCount || 0}</p>
+            <p className="stat-number">{followStats.followers}</p>
             <span>Followers</span>
           </div>
           <div>
-            <p className="stat-number">{user?.followingCount || 0}</p>
+            <p className="stat-number">{followStats.following}</p>
             <span>Following</span>
           </div>
         </div>
