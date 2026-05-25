@@ -37,3 +37,25 @@ export async function updateProfileApi(formData) {
     });
     return res.data;
 }
+export async function getAllUsersApi(search, page, limit) {
+
+    const res = await api.get(
+        `/auth/getAllUsers?search=${encodeURIComponent(search)}&page=${page}&limit=${limit}`,
+        {
+            withCredentials: true,
+        }
+    );
+
+    return res.data;
+}
+export async function getUserByIdApi(id) {
+    const res = await api.get(
+        `/auth/getUserById/${id}`,
+        {
+            withCredentials: true,
+        }
+    );
+
+    return res.data;
+}
+

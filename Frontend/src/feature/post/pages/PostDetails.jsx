@@ -2,12 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePost } from "../hook/usePost";
 import "../style/postdetails.scss";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { FiMoreHorizontal} from "react-icons/fi";
 import BackButton from "../../../Componenet/Pageheader";
 
 const PostDetails = () => {
   const { postid } = useParams();
-  const { handleGetPostDetails, handleDeletePost, loading,handleToggleLike } = usePost();
+  const { handleGetPostDetails, handleDeletePost, loading, handleToggleLike } = usePost();
 
   const [post, setPost] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
@@ -16,15 +16,13 @@ const PostDetails = () => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleLikeClick = () => {
-  handleToggleLike(post?._id, post?.isLiked);
-};
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
       const res = await handleGetPostDetails(postid);
+      console.log(res);
       setPost(res.data);
     };
     fetchPost();
@@ -52,7 +50,7 @@ const PostDetails = () => {
 
   return (
     <div className="post-details">
-      <BackButton/>
+      <BackButton />
 
       <div className="post-header">
         <div className="leftheader">
@@ -71,8 +69,8 @@ const PostDetails = () => {
                 <button
                   className="delete-btn"
                   onClick={() => {
-                    setShowMenu(false);   
-                    setShowModal(true);   
+                    setShowMenu(false);
+                    setShowModal(true);
                   }}
                 >
                   Delete Post

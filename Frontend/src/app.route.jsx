@@ -9,6 +9,9 @@ import ProfileEdit from './feature/auth/pages/ProfileEdit'
 import PostDetails from './feature/post/pages/PostDetails'
 import Protected from './Componenet/Protected'
 import Public from './Componenet/Public'
+import SearchBarPage from './Componenet/searchBarPage'
+import UserProfilePage from './feature/auth/pages/UserProfilePage'
+
 
 
 export const router = createBrowserRouter([
@@ -24,4 +27,6 @@ export const router = createBrowserRouter([
   { path: "/profile", element: <Protected><Profile /></Protected> },
   { path: "/profile/edit", element: <Protected><ProfileEdit /></Protected> },
   { path: "/post/:postid", element: <Protected><PostDetails /></Protected> },
+  { path: "/search", element: <Protected><SearchBarPage /></Protected> },
+  { path: "/user/:id", element: <Protected><UserProfilePage /></Protected> }
 ])

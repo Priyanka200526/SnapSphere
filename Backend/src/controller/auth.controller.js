@@ -5,6 +5,8 @@ import redis from "../config/cache.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import ImageKit from "imagekit";
+import PostModel from "../model/post.model.js";
+import followModel from "../model/follow.model.js";
 
 const imagekit = new ImageKit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -46,7 +48,7 @@ export const loginController = asyncHandler(async (req, res, next) => {
 
     const user = await authModel
         .findOne({ email: email.toLowerCase() })
-        .select("+password"); 
+        .select("+password");
 
     if (!user) return next(new AppError("Invalid email or password", 401));
     if (!user.isVerified) return next(new AppError("Please verify your account first", 401));
@@ -126,4 +128,98 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
             ...user.toObject(),
         }
     });
+});
+export const getAllUsers = asyncHandler(async (req, res, next) => {
+    const { search = "", page = 1, limit = 10 } = req.query;
+
+    // OPTIMIZATION: Agar search string bilkul khali hai (bina spaces ke), 
+    // toh database query chalane ki zarurat hi nahi hai, instant empty array bhej do.
+    if (!search.trim()) {
+        return res.status(200).json({
+            success: true,
+            count: 0,
+            totalUsers: 0,
+            totalPages: 0,
+            currentPage: Number(page),
+            users: [] // Turant khali array return karo bina blink space ke
+        });
+    }
+
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const query = {
+        _id: { $ne: req.user.id },
+        $or: [
+            {
+                username: {
+                    $regex: search.trim(), // spaces clean karke search karo
+                    $options: "i"
+                }
+            }
+        ]
+    };
+
+    // Ek sath dono operations run karo taaki response time fast ho jaye (No lag)
+    const [users, totalUsers] = await Promise.all([
+        authModel.find(query).select("-password").skip(skip).limit(limitNumber).lean(),
+        authModel.countDocuments(query)
+    ]);
+
+    res.status(200).json({
+        success: true,
+        count: users.length,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / limitNumber),
+        currentPage: pageNumber,
+        users
+    });
+});
+export const getUserById = asyncHandler(async (req, res) => {
+
+    const user = await authModel
+        .findById(req.params.id)
+        .select("-password");
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "User not found"
+        });
+    }
+
+    // user posts
+    const posts = await PostModel.find({
+        user: req.params.id
+    });
+
+    // followers count
+    const followersCount = await followModel.countDocuments({
+        followee: req.params.id,
+        status: "accepted"
+    });
+
+    // following count
+    const followingCount = await followModel.countDocuments({
+        follower: req.params.id,
+        status: "accepted"
+    });
+
+    res.status(200).json({
+        success: true,
+
+        user: {
+            ...user._doc,
+
+            postsCount: posts.length,
+
+            followersCount,
+
+            followingCount
+        },
+
+        posts
+    });
+
 });

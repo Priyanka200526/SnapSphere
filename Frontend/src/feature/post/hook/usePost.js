@@ -19,7 +19,6 @@ export const usePost = () => {
         try {
             setLoading(true)
             const data = await getFeed()
-            console.log(data)
             setFeed([...(data.data || [])].reverse())
 
         } catch (error) {

@@ -77,12 +77,12 @@ export const getUserPosts = asyncHandler(async (req, res) => {
 
   const updatedPosts = await addLikeInfoToPosts(posts, userId);
 
-  const postsCount = posts.length; 
+  const postsCount = posts.length;
 
   res.status(200).json({
     status: true,
     posts: updatedPosts,
-    postsCount, 
+    postsCount,
   });
 });
 export const getPostDetailsController = asyncHandler(async (req, res, next) => {
@@ -98,12 +98,22 @@ export const getPostDetailsController = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  res.status(200).json({
-    status: true,
-    message: "post details feched successfully",
-    data: postdetails
+  const likesCount = await likeModel.countDocuments({ post: postid });
+
+  const isLiked = await likeModel.exists({
+    post: postid,
+    user: userid
   });
 
+  res.status(200).json({
+    status: true,
+    message: "post details fetched successfully",
+    data: {
+      ...postdetails._doc,
+      likesCount,
+      isLiked: !!isLiked
+    }
+  });
 });
 export const toggleLikePost = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
