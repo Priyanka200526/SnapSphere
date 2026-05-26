@@ -3,7 +3,6 @@ import { useContext, useEffect } from "react"
 import { PostContext } from "../context/post.context"
 import { useState } from "react"
 
-
 export const usePost = () => {
 
     const context = useContext(PostContext)
@@ -32,7 +31,7 @@ export const usePost = () => {
         try {
             setLoading(true)
 
-            const data = await createPost(formData) 
+            const data = await createPost(formData)
 
             setFeed((prev) => [
                 {
@@ -78,7 +77,7 @@ export const usePost = () => {
             const data = await getUserPosts();
 
             setPost(data.posts || []);
-            setPostsCount(data.postsCount || 0); 
+            setPostsCount(data.postsCount || 0);
 
         } catch (error) {
             console.error(error);
@@ -121,6 +120,7 @@ export const usePost = () => {
         }
     };
 
+
     useEffect(() => {
         handleGetFeed()
     }, [])
@@ -128,6 +128,7 @@ export const usePost = () => {
     return {
         loading,
         feed,
+        setFeed,
         post,
         postsCount, // 🔥 add this
         handleGetFeed,

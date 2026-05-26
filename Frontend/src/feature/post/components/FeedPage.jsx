@@ -4,7 +4,8 @@ import '../style/feed.scss'
 
 const FeedPage = () => {
 
-  const { feed, loading, handleToggleLike } = usePost();
+  const { feed, loading, handleToggleLike, handleDeletePost } = usePost();
+
 
   if (loading) {
     return (
@@ -23,14 +24,18 @@ const FeedPage = () => {
           {feed?.length === 0 ? (
             <p className="empty-feed">No posts yet</p>
           ) : (
-            feed.map((post) => (
-              <PostCard
-                key={post._id}
-                user={post.user}
-                post={post}
-                handleToggleLike={handleToggleLike}
-              />
-            ))
+            feed.map((post, index) => {
+
+              return (
+                <PostCard
+                  key={post?._id || index}
+                  user={post.user}
+                  post={post}
+                  handleToggleLike={handleToggleLike}
+                  handleDeletePost={handleDeletePost}
+                />
+              )
+            })
           )}
 
         </div>

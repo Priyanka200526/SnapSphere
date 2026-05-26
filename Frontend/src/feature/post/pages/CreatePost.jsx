@@ -115,7 +115,7 @@ const CreatePost = () => {
           {images.length > 0 && (
             <div className="preview-grid">
               {images.map((img, index) => (
-                <div key={index} className="preview-item">
+                <div key={img.url} className="preview-item">
                   <img src={img.url} alt="preview" />
                   <button type="button" onClick={() => removeImage(index)}>
                     ✖
