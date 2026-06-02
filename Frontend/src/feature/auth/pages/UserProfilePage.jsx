@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../hook/useAuth";
 import "../style/userProfilePage.scss";
 import PageHeader from "../../../Componenet/Pageheader"
+import { usefollow } from "../../follow/hook/usefollow";
 
 const UserProfilePage = () => {
 
@@ -12,9 +13,23 @@ const UserProfilePage = () => {
         handleGetUserById,
         profileUser,
         loading,
-        profilePosts
+        profilePosts,
     } = useAuth();
+    const { handleToggleFollow } = usefollow()
+    const [isFollowing, setIsFollowing] = useState(false);
 
+    const handleFollowClick = async () => {
+        try {
+            await handleToggleFollow(profileUser._id);
+
+            setIsFollowing(prev => !prev);
+
+            await handleGetUserById(id);
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
     useEffect(() => {
 
         if (id) {
@@ -25,7 +40,7 @@ const UserProfilePage = () => {
 
     return (
         <div className="up-wrapper">
-                <PageHeader />
+            <PageHeader />
 
             {/* LOADER */}
             {
@@ -62,7 +77,15 @@ const UserProfilePage = () => {
 
                             <div className="up-details">
 
-                                <h2>{profileUser.username}</h2>
+                                <h2>{profileUser.username}
+
+                                    <button
+                                        className="follow-btn"
+                                        onClick={handleFollowClick}
+                                    >
+                                        {isFollowing ? "Unfollow" : "Follow"}
+                                    </button>
+                                </h2>
 
                                 <p>{profileUser.email}</p>
 

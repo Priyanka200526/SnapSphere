@@ -8,6 +8,7 @@ import otpRoutes from "../src/routes/otp.routes.js";
 import postRoutes from "../src/routes/post.routes.js";
 import followRoutes from "../src/routes/follow.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
+import notificationRoutes from "./routes/notication.routes.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/follow", followRoutes);
+app.use("/api/notifications",notificationRoutes)
 
 app.use(errorHandler);
 export default app;

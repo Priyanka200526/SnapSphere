@@ -46,6 +46,7 @@ const Navbar = () => {
           type="button"
           className="icon-btn"
           aria-label="Notifications"
+          onClick={() => navigate("/notifications")}
         >
           <FiBell />
         </button>

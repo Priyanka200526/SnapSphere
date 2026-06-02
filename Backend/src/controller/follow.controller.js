@@ -2,37 +2,59 @@ import followModel from "../model/follow.model.js";
 import authModel from "../model/auth.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
+import notificationModel from "../model/notification.model.js";
 
 
-export const followUserController = asyncHandler(async (req, res) => {
+
+export const toggleFollowController = asyncHandler(async (req, res) => {
+
     const follower = req.user.id;
     const followee = req.params.userid;
 
+    // khud ko follow nahi kar sakte
     if (follower === followee) {
         throw new AppError("You cannot follow yourself", 400);
     }
 
+    // user exist karta hai ya nahi
     const userExists = await authModel.findById(followee);
+
     if (!userExists) {
         throw new AppError("User does not exist", 404);
     }
 
-    const alreadyRequested = await followModel.findOne({ follower, followee });
-    if (alreadyRequested) {
-        throw new AppError("Follow request already sent", 400);
+    // already follow hai?
+    const existingFollow = await followModel.findOne({
+        follower,
+        followee
+    });
+
+    // unfollow
+    if (existingFollow) {
+
+        await followModel.findByIdAndDelete(existingFollow._id);
+
+        return res.status(200).json({
+            success: true,
+            type: "unfollow",
+            message: "User unfollowed successfully"
+        });
     }
 
+    // follow
     const follow = await followModel.create({
         follower,
         followee,
-        status: "pending"
+        status: "accepted"
     });
 
     res.status(201).json({
         success: true,
-        message: "Follow request sent",
+        type: "follow",
+        message: "User followed successfully",
         data: follow
     });
+
 });
 export const acceptFollowRequest = asyncHandler(async (req, res) => {
     const followId = req.params.followid;
@@ -91,24 +113,6 @@ export const getPendingRequests = asyncHandler(async (req, res) => {
         data: requests
     });
 });
-export const unfollowUserController = asyncHandler(async (req, res) => {
-    const follower = req.user.id;
-    const followee = req.params.userid;
-
-    const isFollowing = await followModel.findOne({ follower, followee });
-    if (!isFollowing) {
-        throw new AppError("You are not following this user", 400);
-    }
-    if (isFollowing.status !== "accepted") {
-        throw new AppError("Follow request not accepted yet", 400);
-    }
-    await followModel.findOneAndDelete({ follower, followee });
-
-    res.status(200).json({
-        success: true,
-        message: "User unfollowed successfully"
-    });
-});
 export const getFollowStats = asyncHandler(async (req, res) => {
     const userId = req.user.id;
 
@@ -128,4 +132,5 @@ export const getFollowStats = asyncHandler(async (req, res) => {
         following
     });
 });
+
 

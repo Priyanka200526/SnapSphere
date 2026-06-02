@@ -1,8 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../auth/context/auth.context'
 import {
-    followUserApi,
-    unfollowUserApi, getFollowStatsApi
+    toggleFollowApi, getFollowStatsApi, acceptFollowRequestApi, rejectFollowRequestApi
 } from '../service/follow.api'
 export const usefollow = () => {
     const context = useContext(AuthContext)
@@ -24,32 +23,66 @@ export const usefollow = () => {
             console.log(err);
         }
     }
-    async function handleFollow(userId) {
+    async function handleToggleFollow(userId) {
+
         try {
-            await followUserApi(userId);
-            await handleFollowStats(); 
-        } catch (err) {
-            alert(err.response?.data?.message || "Follow failed");
-        }
-    }
-    async function handleUnfollow(userId) {
-        try {
-            await unfollowUserApi(userId);
+
+            const data = await toggleFollowApi(userId);
+
             await handleFollowStats();
+
+            return data;
+
         } catch (err) {
-            alert(err.response?.data?.message || "Unfollow failed");
+
+            alert(
+                err.response?.data?.message || "Action failed"
+            );
+
         }
+
+    }
+    async function handleAcceptRequest(followId) {
+
+        try {
+
+            await acceptFollowRequestApi(followId);
+
+            await handleGetNotifications();
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+
     }
 
+    async function handleRejectRequest(followId) {
+
+        try {
+
+            await rejectFollowRequestApi(followId);
+
+            await handleGetNotifications();
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+
+    }
 
     useEffect(() => {
         handleFollowStats();
     }, [])
     return (
         {
-            handleFollow,
-            handleUnfollow,
+            handleToggleFollow,
             handleFollowStats,
+            handleAcceptRequest,
+            handleRejectRequest,
             followStats,
             errors,
             setErrors,
