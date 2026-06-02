@@ -10,23 +10,17 @@ export const useNotification = () => {
     } = useContext(NotificationContext);
 
     async function handleGetNotifications() {
-
         try {
 
             const data = await getNotificationsApi();
 
-            setNotifications(
-                data.notifications
-            );
+            setNotifications(data.data);
 
-            return data.notifications;
+            return data.data;
 
         } catch (err) {
-
             console.log(err);
-
         }
-
     }
 
     return {

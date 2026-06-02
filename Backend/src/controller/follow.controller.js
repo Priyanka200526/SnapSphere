@@ -48,6 +48,12 @@ export const toggleFollowController = asyncHandler(async (req, res) => {
         status: "accepted"
     });
 
+    await notificationModel.create({
+        sender: follower,
+        receiver: followee,
+        type: "follow"
+    });
+
     res.status(201).json({
         success: true,
         type: "follow",
@@ -132,5 +138,6 @@ export const getFollowStats = asyncHandler(async (req, res) => {
         following
     });
 });
+
 
 

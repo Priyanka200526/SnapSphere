@@ -27,6 +27,10 @@ const authSchema = new mongoose.Schema({
         default: process.env.DEFAULT_PROFILE_IMAGE ||
             "https://ik.imagekit.io/ugywijw7c/download.png?updatedAt=1771150770486"
     },
+    isPrivate: {
+        type: Boolean,
+        default: false
+    },
     isVerified: { type: Boolean, default: false }
 }, { timestamps: true });
 
