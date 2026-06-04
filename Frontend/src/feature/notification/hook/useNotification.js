@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { NotificationContext } from "../context/notification.context";
-import { getNotificationsApi } from "../service/notification.api.js";
+import { getNotificationsApi, getUnreadCountApi, markAllAsReadApi } from "../service/notification.api.js";
 
 export const useNotification = () => {
 
     const {
         notifications,
-        setNotifications
+        setNotifications,unreadCount,setUnreadCount
     } = useContext(NotificationContext);
 
     async function handleGetNotifications() {
@@ -22,12 +22,44 @@ export const useNotification = () => {
             console.log(err);
         }
     }
+    async function handleGetUnreadCount() {
+
+        try {
+
+            const data = await getUnreadCountApi();
+
+            setUnreadCount(data.count);
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+
+    }
+    async function handleMarkAllAsRead() {
+
+        try {
+
+            await markAllAsReadApi();
+
+            setUnreadCount(0);
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+
+    }
 
     return {
-
         notifications,
-        handleGetNotifications
-
+        handleGetNotifications,
+        unreadCount,
+        setUnreadCount,
+        handleGetUnreadCount,
+        handleMarkAllAsRead
     };
 
 };

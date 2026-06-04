@@ -4,10 +4,28 @@ import "../style/notification.scss";
 import PageHeader from "../../../Componenet/Pageheader";
 
 const FollowNotificationPage = () => {
-    const { notifications, handleGetNotifications } = useNotification();
+
+    const {
+        notifications,
+        handleGetNotifications,
+        handleGetUnreadCount,
+        handleMarkAllAsRead
+    } = useNotification();
 
     useEffect(() => {
-        handleGetNotifications();
+
+        const init = async () => {
+            await handleGetNotifications();
+
+            // page open hote hi unread reset
+            await handleMarkAllAsRead();
+
+            // navbar badge update
+            await handleGetUnreadCount();
+        };
+
+        init();
+
     }, []);
 
     const formatTimestamp = (dateString) => {
@@ -43,25 +61,22 @@ const FollowNotificationPage = () => {
 
     return (
         <div className="notification-page">
+
             <PageHeader />
 
             <div className="notification-container">
+
                 <div className="notification-header">
                     <div className="header-title-area">
                         <h2>Notifications</h2>
-
-                        {notifications?.length > 0 && (
-                            <span className="notification-badge">
-                                {notifications.length} New
-                            </span>
-                        )}
                     </div>
                 </div>
 
                 <div className="notification-card-wrapper">
+
                     {!notifications || notifications.length === 0 ? (
                         <div className="notification-empty">
-                            <p>No new notifications yet</p>
+                            <p>No notifications yet</p>
                         </div>
                     ) : (
                         notifications.map((item) => (
@@ -70,6 +85,7 @@ const FollowNotificationPage = () => {
                                 key={item._id}
                             >
                                 <div className="notification-meta">
+
                                     <div className="avatar-container">
                                         <img
                                             src={item.sender?.profileImage}
@@ -80,6 +96,7 @@ const FollowNotificationPage = () => {
 
                                     <div className="text-container">
                                         <div className="text-content">
+
                                             <span className="user-name">
                                                 {item.sender?.username}
                                             </span>
@@ -92,14 +109,19 @@ const FollowNotificationPage = () => {
                                             <span className="time-stamp">
                                                 {formatTimestamp(item.createdAt)}
                                             </span>
+
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         ))
                     )}
+
                 </div>
+
             </div>
+
         </div>
     );
 };

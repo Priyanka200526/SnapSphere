@@ -8,10 +8,21 @@ import {
 } from "react-icons/fi";
 
 import "../feature/shared/style/navbar.scss";
+import { useNotification } from "../feature/notification/hook/useNotification";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const {
+    unreadCount,
+    handleGetUnreadCount
+  } = useNotification();
 
+  useEffect(() => {
+
+    handleGetUnreadCount();
+
+  }, []);
   return (
     <nav className="navbar">
 
@@ -42,13 +53,20 @@ const Navbar = () => {
           <FiPlusSquare />
         </button>
 
+
         <button
           type="button"
-          className="icon-btn"
+          className="icon-btn notification-btn"
           aria-label="Notifications"
           onClick={() => navigate("/notifications")}
         >
           <FiBell />
+
+          {unreadCount > 0 && (
+            <span className="notification-badge">
+              {unreadCount}
+            </span>
+          )}
         </button>
 
         <button
