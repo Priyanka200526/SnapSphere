@@ -22,7 +22,6 @@ export const sendOTP = async (email, username, password) => {
         const hashedOTP = await bcrypt.hash(otp, 10);
         password: password
         const existing = await redis.get(`otp:${email}`);
-console.log("existing otp:", existing);
         if (existing) {
             throw new AppError("Please wait before requesting another OTP", 400);
         }

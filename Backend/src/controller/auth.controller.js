@@ -1,3 +1,4 @@
+import "dotenv/config";
 import authModel from "../model/auth.model.js";
 import { sendOTP } from "../controller/otp.controller.js";
 import generateToken from "../utils/token.js";

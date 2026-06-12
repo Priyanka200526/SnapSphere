@@ -1,12 +1,13 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NotificationContext } from "../context/notification.context";
 import { getNotificationsApi, getUnreadCountApi, markAllAsReadApi } from "../service/notification.api.js";
+import { socket } from "../../../socket/socket.js";
 
 export const useNotification = () => {
 
     const {
         notifications,
-        setNotifications,unreadCount,setUnreadCount
+        setNotifications, unreadCount, setUnreadCount
     } = useContext(NotificationContext);
 
     async function handleGetNotifications() {
@@ -52,7 +53,25 @@ export const useNotification = () => {
         }
 
     }
+    useEffect(() => {
 
+        socket.on("notification", (data) => {
+
+            console.log("🔥 New notification received:", data);
+
+            // 1. UI update instantly
+            setNotifications(prev => [data, ...prev]);
+
+            // 2. badge update bhi karna hai
+            setUnreadCount(prev => prev + 1);
+
+        });
+
+        return () => {
+            socket.off("notification");
+        };
+
+    }, []);
     return {
         notifications,
         handleGetNotifications,

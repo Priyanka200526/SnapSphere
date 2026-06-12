@@ -25,6 +25,9 @@ app.use("/api/otp", otpRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/notifications",notificationRoutes)
-
+app.get("/test", (req, res) => {
+    res.send("Working");
+});
 app.use(errorHandler);
 export default app;
+

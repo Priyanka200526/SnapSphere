@@ -3,7 +3,7 @@ import authModel from "../model/auth.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import notificationModel from "../model/notification.model.js";
-
+import { io } from "../../server.js";
 
 
 export const toggleFollowController = asyncHandler(async (req, res) => {
@@ -53,7 +53,11 @@ export const toggleFollowController = asyncHandler(async (req, res) => {
         receiver: followee,
         type: "follow"
     });
-
+    io.to(followee).emit("notification", {
+        type: "follow",
+        sender: follower,
+        message: "started following you"
+    });
     res.status(201).json({
         success: true,
         type: "follow",

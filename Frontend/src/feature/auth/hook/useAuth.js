@@ -17,7 +17,6 @@ import { handleApi } from '../../shared/utils/apihandler'
 export const useAuth = () => {
 
     const {
-
         user,
         setUser,
 
