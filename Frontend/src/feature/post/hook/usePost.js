@@ -106,7 +106,6 @@ export const usePost = () => {
             console.log(err);
         }
     };
-
     const handleGetPostDetails = async (postid) => {
         try {
             setLoading(true);

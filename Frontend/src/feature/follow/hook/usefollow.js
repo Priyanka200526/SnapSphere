@@ -57,7 +57,6 @@ export const usefollow = () => {
         }
 
     }
-
     async function handleRejectRequest(followId) {
 
         try {

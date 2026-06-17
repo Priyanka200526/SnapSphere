@@ -120,6 +120,10 @@ const PostCard = ({
                   : "icon"
               }
             />
+
+            <span className="counts-num">
+              {post?.likesCount || 0}
+            </span>
           </button>
 
           <button
@@ -127,7 +131,7 @@ const PostCard = ({
             onClick={() => setShowComments(true)}
           >
             <FiMessageCircle className="icon" />
-            <span className="comment-count">
+            <span className="counts-num">
               {commentCount}
             </span>
           </button>
@@ -141,10 +145,6 @@ const PostCard = ({
           <FiBookmark className="icon" />
         </button>
 
-      </div>
-
-      <div className="post-likes">
-        {post?.likesCount || 0} likes
       </div>
 
       <div className="post-caption">
