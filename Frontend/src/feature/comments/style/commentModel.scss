@@ -1,0 +1,230 @@
+// Colors & Variables (Premium Dark Palette)
+$bg-overlay: rgba(0, 0, 0, 0.75);
+$bg-modal: #0d0e12; 
+$bg-input: #161920;
+$border-color: #222630;
+
+// Text Colors (High Contrast & Readability)
+$text-primary: #f3f4f6;   // Clean bright text
+$text-secondary: #9ca3af; // Accessible muted text
+$text-link: #3b82f6;
+
+// Interactive Colors
+$accent-color: #2563eb;
+$accent-hover: #1d4ed8;
+$danger-color: #ef4444;
+$danger-hover: #dc2626;
+
+.comment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $bg-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.comment-modal {
+  background-color: $bg-modal;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  height: 80vh;
+  max-height: 650px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.comment-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: $text-secondary;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $text-primary;
+    }
+  }
+}
+
+.comments-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $border-color;
+    border-radius: 3px;
+  }
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba($border-color, 0.5);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid $border-color;
+    flex-shrink: 0;
+  }
+
+  .comment-content {
+    flex: 1;
+    min-width: 0;
+
+    p {
+      font-size: 0.925rem;
+      line-height: 1.5;
+      color: $text-primary;
+      margin: 0;
+      word-wrap: break-word;
+
+      strong {
+        font-weight: 600;
+        color: $text-primary;
+        margin-right: 6px;
+        display: inline-block;
+      }
+    }
+  }
+
+  .delete-comment-btn {
+    background: transparent;
+    border: none;
+    color: $text-secondary;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+
+    &:hover {
+      color: $danger-color;
+      background-color: rgba($danger-color, 0.1);
+    }
+  }
+}
+
+.empty-comments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: auto 0;
+  padding: 40px 20px;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 6px 0;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.comment-input-container {
+  padding: 16px 20px;
+  border-top: 1px solid $border-color;
+  background-color: $bg-modal;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  input {
+    flex: 1;
+    background-color: $bg-input;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: $text-primary;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $accent-color;
+      box-shadow: 0 0 0 2px rgba($accent-color, 0.2);
+    }
+
+    &::placeholder {
+      color: $text-secondary;
+    }
+  }
+
+  button {
+    background-color: $accent-color;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: $accent-hover;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

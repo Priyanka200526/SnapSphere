@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './app.route'
-
 import "../feature/shared/style/global.scss"
-import { PostContextProvider } from '../feature/post/context/post.context'
+import {PostContextProvider} from '../feature/post/context/post.context'
 import { NotificationProvider } from '../feature/notification/context/notification.context'
 import { Toaster } from "react-hot-toast"
 
 import { socket } from "../socket/socket"
 import { useAuth } from '../feature/auth/hook/useAuth'
+import { CommentProvider } from '../feature/comments/context/CommentContext'
 
 const App = () => {
 
@@ -26,7 +26,9 @@ const App = () => {
 
       <PostContextProvider>
         <NotificationProvider>
-          <RouterProvider router={router} />
+          <CommentProvider>
+            <RouterProvider router={router} />
+          </CommentProvider>
         </NotificationProvider>
       </PostContextProvider>
     </>

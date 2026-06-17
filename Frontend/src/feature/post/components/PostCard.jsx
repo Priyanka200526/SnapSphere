@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../auth/hook/useAuth";
 
-import '../style/postcard.scss'
-
+import "../style/postcard.scss";
+import { useComment } from "../../comments/hook/useComments";
+import CommentModal from "../../comments/pages/CommentModal";
 import {
   FiHeart,
   FiMessageCircle,
@@ -10,13 +11,22 @@ import {
   FiBookmark,
   FiMoreHorizontal
 } from "react-icons/fi";
+import { useEffect } from "react";
 
-const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
+const PostCard = ({
+  user,
+  post,
+  handleToggleLike,
+  handleDeletePost
+}) => {
 
   const { user: currentUser } = useAuth();
+  const { handleGetCommentCount } = useComment();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
 
   const handleLikeClick = () => {
     handleToggleLike(post?._id, post?.isLiked);
@@ -28,6 +38,16 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
     const index = Math.round(scrollLeft / width);
     setCurrentIndex(index);
   };
+  useEffect(() => {
+    async function fetchCount() {
+      const count = await handleGetCommentCount(post?._id);
+      setCommentCount(count);
+    }
+
+    if (post?._id) {
+      fetchCount();
+    }
+  }, [post?._id]);
 
   return (
     <div className="post-card">
@@ -35,6 +55,7 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
       <div className="post-header">
 
         <div className="user-info">
+
           <img
             className="profile-img"
             src={user?.profileImage || "/default-avatar.png"}
@@ -44,18 +65,20 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
           <span className="username">
             {user?.username}
           </span>
+
         </div>
 
-        {/* Sirf owner ko delete button dikhega */}
-        {user?._id === currentUser?._id && (
-          <button
-            className="more-btn"
-            type="button"
-            onClick={() => setShowModal(true)}
-          >
-            <FiMoreHorizontal size={20} />
-          </button>
-        )}
+        {
+          user?._id === currentUser?._id && (
+            <button
+              className="more-btn"
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <FiMoreHorizontal size={20} />
+            </button>
+          )
+        }
 
       </div>
 
@@ -65,14 +88,19 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
           {currentIndex + 1} / {post?.images?.length}
         </div>
 
-        <div className="post-image-scroll" onScroll={handleScroll}>
-          {post?.images?.map((img, i) => (
-            <img
-              key={`${post?._id}-${i}`}
-              src={img}
-              alt={`post-${i}`}
-            />
-          ))}
+        <div
+          className="post-image-scroll"
+          onScroll={handleScroll}
+        >
+          {
+            post?.images?.map((img, i) => (
+              <img
+                key={`${post?._id}-${i}`}
+                src={img}
+                alt={`post-${i}`}
+              />
+            ))
+          }
         </div>
 
       </div>
@@ -81,18 +109,32 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
 
         <div className="left-actions">
 
-          <button className="icon-btn" onClick={handleLikeClick}>
-            <FiHeart className={post?.isLiked ? "icon liked" : "icon"} />
+          <button
+            className="icon-btn"
+            onClick={handleLikeClick}
+          >
+            <FiHeart
+              className={
+                post?.isLiked
+                  ? "icon liked"
+                  : "icon"
+              }
+            />
           </button>
 
-          <button className="icon-btn">
+          <button
+            className="icon-btn"
+            onClick={() => setShowComments(true)}
+          >
             <FiMessageCircle className="icon" />
+            <span className="comment-count">
+              {commentCount}
+            </span>
           </button>
 
           <button className="icon-btn">
             <FiSend className="icon" />
           </button>
-
         </div>
 
         <button className="icon-btn">
@@ -106,15 +148,21 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
       </div>
 
       <div className="post-caption">
-        <span className="username">{user?.username}</span>
+
+        <span className="username">
+          {user?.username}
+        </span>
 
         <span className="caption-text">
           {post?.caption}
         </span>
+
       </div>
 
+      {/* DELETE MODAL */}
+
       {
-        showModal && (
+        showDeleteModal && (
 
           <div className="delete-modal-overlay">
 
@@ -134,7 +182,9 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={() =>
+                    setShowDeleteModal(false)
+                  }
                 >
                   Cancel
                 </button>
@@ -144,7 +194,7 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
                   className="confirm-delete-btn"
                   onClick={() => {
                     handleDeletePost(post?._id);
-                    setShowModal(false);
+                    setShowDeleteModal(false);
                   }}
                 >
                   Delete
@@ -156,6 +206,20 @@ const PostCard = ({ user, post, handleToggleLike, handleDeletePost }) => {
 
           </div>
 
+        )
+      }
+
+      {/* COMMENTS MODAL */}
+
+      {
+        showComments && (
+          <CommentModal
+            postId={post?._id}
+            onClose={() => setShowComments(false)}
+            onCommentAdded={() =>
+              setCommentCount(prev => prev + 1)
+            }
+          />
         )
       }
 
