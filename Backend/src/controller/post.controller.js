@@ -5,6 +5,8 @@ import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import { addLikeInfoToPosts } from "../utils/addLikeInfoToPosts.js";
 import authModel from '../model/auth.model.js'
+import notificationModel from "../model/notification.model.js";
+import { io } from "../../server.js";
 
 const imagekit = new Imagekit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -134,6 +136,14 @@ export const toggleLikePost = asyncHandler(async (req, res, next) => {
 
     await likeModel.deleteOne({ _id: existingLike._id });
 
+    // unlike hone par purani like-notification delete kar do
+    await notificationModel.deleteOne({
+      sender: userId,
+      receiver: post.user,
+      type: "like",
+      postId: postId
+    });
+
     return res.status(200).json({
       status: true,
       message: "Post unliked",
@@ -145,6 +155,18 @@ export const toggleLikePost = asyncHandler(async (req, res, next) => {
       user: userId,
       post: postId,
     });
+
+    // apni hi post like karne par notification mat banao
+    if (post.user.toString() !== userId) {
+      const notification = await notificationModel.create({
+        sender: userId,
+        receiver: post.user,
+        type: "like",
+        postId: postId
+      });
+
+      io.to(post.user.toString()).emit("newNotification", notification);
+    }
 
     return res.status(201).json({
       status: true,
@@ -178,7 +200,6 @@ export const getFeed = asyncHandler(async (req, res) => {
     data: postsWithSaved,
   });
 });
-
 export const toggleSavePost = asyncHandler(async (req, res) => {
   const { postId } = req.params;
 

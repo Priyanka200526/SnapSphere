@@ -3,6 +3,7 @@ import { usePost } from "../hook/usePost";
 import { useComment } from "../../comments/hook/useComments";
 import PostCard from "./PostCard";
 import '../style/saved.scss'
+import BackButton from "../../../Componenet/Pageheader";
 
 const Saved = () => {
     const {
@@ -43,6 +44,9 @@ const Saved = () => {
     }, [feed]);
 
     return (
+        
+       <>
+       <BackButton/>
         <div className="saved-page">
             <div className="saved-page__header">
                 <h2>Saved Posts</h2>
@@ -148,6 +152,7 @@ const Saved = () => {
                 </div>
             )}
         </div>
+       </>
     );
 };
 

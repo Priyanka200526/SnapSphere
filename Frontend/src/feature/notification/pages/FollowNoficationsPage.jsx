@@ -1,9 +1,12 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotification } from "../hook/useNotification.js";
 import "../style/notification.scss";
 import PageHeader from "../../../Componenet/Pageheader";
 
 const FollowNotificationPage = () => {
+
+    const navigate = useNavigate();
 
     const {
         notifications,
@@ -16,11 +19,7 @@ const FollowNotificationPage = () => {
 
         const init = async () => {
             await handleGetNotifications();
-
-            // page open hote hi unread reset
             await handleMarkAllAsRead();
-
-            // navbar badge update
             await handleGetUnreadCount();
         };
 
@@ -59,6 +58,14 @@ const FollowNotificationPage = () => {
         }
     };
 
+    const handleNotificationClick = (item) => {
+        if (item.type === "like" || item.type === "comment") {
+            navigate(`/post/${item.postId}`);
+        } else if (item.type === "follow" || item.type === "follow_accepted") {
+            navigate(`/profile/${item.sender?._id}`);
+        }
+    };
+
     return (
         <div className="notification-page">
 
@@ -83,6 +90,7 @@ const FollowNotificationPage = () => {
                             <div
                                 className="notification-row"
                                 key={item._id}
+                                onClick={() => handleNotificationClick(item)}
                             >
                                 <div className="notification-meta">
 

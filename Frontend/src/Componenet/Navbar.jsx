@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiSearch,
@@ -9,7 +9,7 @@ import {
 
 import "../feature/shared/style/navbar.scss";
 import { useNotification } from "../feature/notification/hook/useNotification";
-import { useEffect } from "react";
+import { socket } from "../socket/socket";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,10 +19,17 @@ const Navbar = () => {
   } = useNotification();
 
   useEffect(() => {
-
     handleGetUnreadCount();
 
+    socket.on("newNotification", () => {
+      handleGetUnreadCount();
+    });
+
+    return () => {
+      socket.off("newNotification");
+    };
   }, []);
+
   return (
     <nav className="navbar">
 

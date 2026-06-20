@@ -2,6 +2,8 @@ import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import CommentModel from "../model/comments.model.js";
 import PostModel from "../model/post.model.js";
+import notificationModel from "../model/notification.model.js";
+import { io } from "../../server.js";
 
 export const addComment = asyncHandler(async (req, res, next) => {
     console.log("req.user =", req.user);
@@ -27,9 +29,48 @@ export const addComment = asyncHandler(async (req, res, next) => {
         .findById(comment._id)
         .populate("user", "username profileImage");
 
+    // apni hi post pe comment karne par notification mat banao
+    if (post.user.toString() !== req.user.id) {
+      const notification = await notificationModel.create({
+        sender: req.user.id,
+        receiver: post.user,
+        type: "comment",
+        postId: postId,
+        commentId: comment._id
+      });
+
+      io.to(post.user.toString()).emit("newNotification", notification);
+    }
+
     res.status(201).json({
         success: true,
         comment: populatedComment
+    });
+});
+export const deleteComment = asyncHandler(async (req, res, next) => {
+    const { commentId } = req.params;
+
+    const comment = await CommentModel.findById(commentId);
+
+    if (!comment) {
+        return next(new AppError("Comment not found", 404));
+    }
+
+    if (comment.user.toString() !== req.user.id) {
+        return next(new AppError("Unauthorized", 403));
+    }
+
+    await CommentModel.findByIdAndDelete(commentId);
+
+    // related notification bhi delete kar do
+    await notificationModel.deleteOne({
+      commentId: commentId,
+      type: "comment"
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Comment deleted successfully"
     });
 });
 export const getComments = asyncHandler(async (req, res, next) => {
@@ -48,26 +89,6 @@ export const getComments = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         comments
-    });
-});
-export const deleteComment = asyncHandler(async (req, res, next) => {
-    const { commentId } = req.params;
-
-    const comment = await CommentModel.findById(commentId);
-
-    if (!comment) {
-        return next(new AppError("Comment not found", 404));
-    }
-
-    if (comment.user.toString() !== req.user.id) {
-        return next(new AppError("Unauthorized", 403));
-    }
-
-    await CommentModel.findByIdAndDelete(commentId);
-
-    res.status(200).json({
-        success: true,
-        message: "Comment deleted successfully"
     });
 });
 export const commentCount = asyncHandler(async (req, res, next) => {
