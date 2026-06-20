@@ -27,6 +27,12 @@ const authSchema = new mongoose.Schema({
         default: process.env.DEFAULT_PROFILE_IMAGE ||
             "https://ik.imagekit.io/ugywijw7c/download.png?updatedAt=1771150770486"
     },
+    savedPosts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post"
+        }
+    ],
     isPrivate: {
         type: Boolean,
         default: false

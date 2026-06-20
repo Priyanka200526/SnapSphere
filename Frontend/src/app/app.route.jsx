@@ -12,6 +12,7 @@ import Public from '../Componenet/Public'
 import SearchBarPage from '../Componenet/searchBarPage'
 import UserProfilePage from '../feature/auth/pages/UserProfilePage'
 import FollowNotificationPage from '../feature/notification/pages/followNoficationsPage'
+import Saved from '../feature/post/components/Saved'
 
 
 
@@ -30,5 +31,6 @@ export const router = createBrowserRouter([
   { path: "/post/:postid", element: <Protected><PostDetails /></Protected> },
   { path: "/search", element: <Protected><SearchBarPage /></Protected> },
   { path: "/user/:id", element: <Protected><UserProfilePage /></Protected> },
-  { path: "/notifications",element:<Protected><FollowNotificationPage/></Protected>}
+  { path: "/notifications", element: <Protected><FollowNotificationPage /></Protected> },
+  { path: "/saved", element: <Protected><Saved /></Protected> }
 ])

@@ -33,4 +33,10 @@ export const toggleLikePost = async (postid) => {
     const res = await api.post(`/like/${postid}`)
     return res.data
 }
+export const toggleSavePostApi = async (postId) => {
+    const response = await api.post(
+        `/${postId}/save`
+    );
+    return response.data;
+};
 

@@ -4,6 +4,7 @@ import Imagekit, { toFile } from "@imagekit/nodejs";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import { addLikeInfoToPosts } from "../utils/addLikeInfoToPosts.js";
+import authModel from '../model/auth.model.js'
 
 const imagekit = new Imagekit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -156,12 +157,46 @@ export const toggleLikePost = asyncHandler(async (req, res, next) => {
 export const getFeed = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
-  const allPosts = await postModel.find({}).populate("user").lean();
+  const currentUser = await authModel.findById(userId);
+
+  const allPosts = await postModel
+    .find({})
+    .populate("user")
+    .lean();
 
   const posts = await addLikeInfoToPosts(allPosts, userId);
 
+  const postsWithSaved = posts.map(post => ({
+    ...post,
+    isSaved: currentUser.savedPosts.some(
+      id => id.toString() === post._id.toString()
+    )
+  }));
+
   res.status(200).json({
     status: true,
-    data: posts,
+    data: postsWithSaved,
+  });
+});
+
+export const toggleSavePost = asyncHandler(async (req, res) => {
+  const { postId } = req.params;
+
+  const user = await authModel.findById(req.user.id);
+
+  const alreadySaved =
+    user.savedPosts.includes(postId);
+
+  if (alreadySaved) {
+    user.savedPosts.pull(postId);
+  } else {
+    user.savedPosts.push(postId);
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    saved: !alreadySaved
   });
 });

@@ -11,13 +11,15 @@ import {
   FiBookmark,
   FiMoreHorizontal
 } from "react-icons/fi";
+import { BsBookmarkFill } from "react-icons/bs";
 import { useEffect } from "react";
 
 const PostCard = ({
   user,
   post,
   handleToggleLike,
-  handleDeletePost
+  handleDeletePost,
+  handleToggleSave
 }) => {
 
   const { user: currentUser } = useAuth();
@@ -141,8 +143,15 @@ const PostCard = ({
           </button>
         </div>
 
-        <button className="icon-btn">
-          <FiBookmark className="icon" />
+        <button
+          className="icon-btn"
+          onClick={() => handleToggleSave(post?._id)}
+        >
+          {
+            post?.isSaved
+              ? <BsBookmarkFill className="icon saved" />
+              : <FiBookmark className="icon" />
+          }
         </button>
 
       </div>

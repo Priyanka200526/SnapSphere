@@ -1,7 +1,8 @@
-import { createPost, getPostDetails, getFeed, getUserPosts, deletePostApi, toggleLikePost } from "../services/post.api"
+import { createPost, getPostDetails, getFeed, getUserPosts, deletePostApi, toggleLikePost, toggleSavePostApi } from "../services/post.api"
 import { useContext, useEffect } from "react"
 import { PostContext } from "../context/post.context"
 import { useState } from "react"
+import toast from "react-hot-toast";
 
 export const usePost = () => {
 
@@ -26,7 +27,6 @@ export const usePost = () => {
             setLoading(false)
         }
     }
-
     const handleCreatePost = async (formData) => {
         try {
             setLoading(true)
@@ -118,6 +118,32 @@ export const usePost = () => {
             setLoading(false);
         }
     };
+    const handleToggleSave = async (postId) => {
+        try {
+            const res = await toggleSavePostApi(postId);
+
+            setFeed((prev) =>
+                prev.map((p) =>
+                    p._id === postId
+                        ? {
+                            ...p,
+                            isSaved: res.saved
+                        }
+                        : p
+                )
+            );
+
+            if (res.saved) {
+                toast.success("Post saved");
+            } else {
+                toast.success("Post removed from saved");
+            }
+
+        } catch (err) {
+            toast.error("Failed to save post");
+            console.log(err);
+        }
+    };
 
 
     useEffect(() => {
@@ -135,6 +161,7 @@ export const usePost = () => {
         handleGetUserPosts,
         handleToggleLike,
         handleGetPostDetails,
-        handleDeletePost
+        handleDeletePost,
+        handleToggleSave
     }
 }

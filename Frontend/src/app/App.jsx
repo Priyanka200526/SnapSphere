@@ -22,7 +22,7 @@ const App = () => {
 
   return (
     <>
-      <Toaster />
+      <Toaster position="top-right" />
 
       <PostContextProvider>
         <NotificationProvider>

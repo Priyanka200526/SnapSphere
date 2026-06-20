@@ -4,7 +4,7 @@ import '../style/feed.scss'
 
 const FeedPage = () => {
 
-  const { feed, loading, handleToggleLike, handleDeletePost } = usePost();
+  const { feed, loading, handleToggleLike, handleDeletePost,handleToggleSave } = usePost();
 
 
   if (loading) {
@@ -33,6 +33,7 @@ const FeedPage = () => {
                   post={post}
                   handleToggleLike={handleToggleLike}
                   handleDeletePost={handleDeletePost}
+                  handleToggleSave={handleToggleSave}
                 />
               )
             })
