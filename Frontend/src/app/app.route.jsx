@@ -13,6 +13,7 @@ import SearchBarPage from '../Componenet/searchBarPage'
 import UserProfilePage from '../feature/auth/pages/UserProfilePage'
 import FollowNotificationPage from '../feature/notification/pages/followNoficationsPage'
 import Saved from '../feature/post/components/Saved'
+import Explore from '../feature/post/components/Explore'
 
 
 
@@ -32,5 +33,6 @@ export const router = createBrowserRouter([
   { path: "/search", element: <Protected><SearchBarPage /></Protected> },
   { path: "/user/:id", element: <Protected><UserProfilePage /></Protected> },
   { path: "/notifications", element: <Protected><FollowNotificationPage /></Protected> },
-  { path: "/saved", element: <Protected><Saved /></Protected> }
+  { path: "/saved", element: <Protected><Saved /></Protected> },
+   { path: "/explore", element: <Protected><Explore/></Protected> }
 ])

@@ -2,9 +2,9 @@ import { useAuth } from "../feature/auth/hook/useAuth";
 import { Navigate } from "react-router";
 
 const Public = ({ children }) => {
-    const { user, loading } = useAuth();
+    const { user, authLoading } = useAuth();
 
-    if (loading) {
+    if (authLoading) {
         return <h1>loading</h1>;
     }
 

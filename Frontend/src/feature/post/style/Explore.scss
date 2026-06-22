@@ -1,0 +1,217 @@
+$explore-bg: #fafafa;
+$explore-border: #dbdbdb;
+$explore-text-primary: #262626;
+$explore-text-secondary: #8e8e8e;
+$explore-overlay: rgba(0, 0, 0, 0.45);
+$explore-skeleton-base: #e8e8e8;
+$explore-skeleton-shine: #f4f4f4;
+
+.explore-page {
+    max-width: 935px;
+    margin: 0 auto;
+    padding: 24px 12px 60px;
+
+    @media (min-width: 600px) {
+        padding: 40px 20px 80px;
+    }
+
+    &__header {
+        border-bottom: 1px solid $explore-border;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: $explore-text-primary;
+            margin: 0;
+        }
+    }
+}
+
+.explore-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+
+    @media (min-width: 600px) {
+        gap: 24px;
+    }
+}
+
+.explore-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #efefef;
+    cursor: pointer;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.35s ease;
+    }
+
+    &:hover img {
+        transform: scale(1.04);
+    }
+
+    &__multi {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 22px;
+        height: 22px;
+        color: #fff;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+        z-index: 2;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        background: $explore-overlay;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover &__overlay {
+        opacity: 1;
+    }
+
+    &__stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &--skeleton {
+        background: linear-gradient(
+            100deg,
+            $explore-skeleton-base 30%,
+            $explore-skeleton-shine 50%,
+            $explore-skeleton-base 70%
+        );
+        background-size: 200% 100%;
+        animation: explore-shimmer 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes explore-shimmer {
+    0% { background-position: 150% 0; }
+    100% { background-position: -50% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .explore-item img,
+    .explore-item__overlay {
+        transition: none;
+    }
+    .explore-item--skeleton {
+        animation: none;
+        background: $explore-skeleton-base;
+    }
+}
+
+.explore-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+
+    &__icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 1.5px solid $explore-text-primary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+
+        svg {
+            width: 24px;
+            height: 24px;
+            color: $explore-text-primary;
+        }
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 300;
+        margin: 0 0 8px;
+    }
+
+    p {
+        font-size: 14px;
+        color: $explore-text-secondary;
+        margin: 0;
+        max-width: 280px;
+    }
+}
+
+.explore-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.explore-modal {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 8px;
+
+    &__close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+    }
+}

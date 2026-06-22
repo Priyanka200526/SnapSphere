@@ -1,7 +1,7 @@
 import express from "express";
 import identifyUser from "../middleware/auth.middleware.js";
 import multer from "multer";
-import { createPost, getUserPosts, getPostDetailsController, getFeed,deletePost,toggleLikePost,toggleSavePost } from "../controller/post.controller.js";
+import { createPost, getUserPosts, getPostDetailsController, getFeed,deletePost,toggleLikePost,toggleSavePost,getExploreFeed } from "../controller/post.controller.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
 const postRoutes = express.Router();
@@ -13,6 +13,7 @@ postRoutes.get("/details/:postid", identifyUser, getPostDetailsController)
 postRoutes.post("/like/:postid", identifyUser, toggleLikePost)
 postRoutes.get("/feed", identifyUser, getFeed)
 postRoutes.post("/:postId/save",identifyUser,toggleSavePost);
+postRoutes.get("/explore", identifyUser, getExploreFeed);
 
 
 export default postRoutes

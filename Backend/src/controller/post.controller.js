@@ -7,6 +7,7 @@ import { addLikeInfoToPosts } from "../utils/addLikeInfoToPosts.js";
 import authModel from '../model/auth.model.js'
 import notificationModel from "../model/notification.model.js";
 import { io } from "../../server.js";
+import followModel from "../model/follow.model.js";
 
 const imagekit = new Imagekit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -219,5 +220,41 @@ export const toggleSavePost = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     saved: !alreadySaved
+  });
+});
+export const getExploreFeed = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  // jin logo ko already follow kar rahe hain (accepted status)
+  const following = await followModel.find({
+    follower: userId,
+    status: "accepted"
+  }).select("followee");
+
+  const followingIds = following.map(f => f.followee.toString());
+
+  // khud ko bhi exclude karo
+  const excludeIds = [...followingIds, userId];
+  console.log("excludeIds:", excludeIds);
+  const explorePosts = await postModel.aggregate([
+    {
+      $match: {
+        user: { $nin: excludeIds.map(id => new mongoose.Types.ObjectId(id)) }
+      }
+    },
+    { $sample: { size: 30 } }
+  ]);
+
+  // populate manually since aggregate doesn't support .populate()
+  const populatedPosts = await postModel.populate(explorePosts, {
+    path: "user",
+    select: "username profileImage"
+  });
+
+  const posts = await addLikeInfoToPosts(populatedPosts, userId);
+
+  res.status(200).json({
+    status: true,
+    data: posts
   });
 });

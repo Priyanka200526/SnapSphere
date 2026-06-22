@@ -1,4 +1,4 @@
-import { createPost, getPostDetails, getFeed, getUserPosts, deletePostApi, toggleLikePost, toggleSavePostApi } from "../services/post.api"
+import { createPost, getPostDetails, getFeed, getUserPosts, deletePostApi, toggleLikePost, toggleSavePostApi, getExploreFeedApi } from "../services/post.api"
 import { useContext, useEffect } from "react"
 import { PostContext } from "../context/post.context"
 import { useState } from "react"
@@ -6,13 +6,8 @@ import toast from "react-hot-toast";
 
 export const usePost = () => {
 
-    const context = useContext(PostContext)
+    const { loading, setLoading, post, setPost, feed, setFeed, exploreFeed, setExploreFeed } = useContext(PostContext)
 
-    if (!context) {
-        throw new Error("usePost must be used inside PostContextProvider")
-    }
-
-    const { loading, setLoading, post, setPost, feed, setFeed } = context
     const [postsCount, setPostsCount] = useState(0);
 
     const handleGetFeed = async () => {
@@ -144,6 +139,17 @@ export const usePost = () => {
             console.log(err);
         }
     };
+    const handleGetExploreFeed = async () => {
+        try {
+            setLoading(true);
+            const data = await getExploreFeedApi();
+            setExploreFeed(data.data || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     useEffect(() => {
@@ -155,13 +161,15 @@ export const usePost = () => {
         feed,
         setFeed,
         post,
-        postsCount, // 🔥 add this
+        postsCount,
+        exploreFeed,
         handleGetFeed,
         handleCreatePost,
         handleGetUserPosts,
         handleToggleLike,
         handleGetPostDetails,
         handleDeletePost,
-        handleToggleSave
+        handleToggleSave,
+        handleGetExploreFeed
     }
 }

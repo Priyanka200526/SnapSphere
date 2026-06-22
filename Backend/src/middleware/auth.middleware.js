@@ -2,9 +2,11 @@ import jwt from "jsonwebtoken";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+console.log("MIDDLEWARE FILE LOADED, SECRET:", process.env.JWT_SECRET);
 const identifyUser = asyncHandler(async (req, res, next) => {
-    console.log("Cookies:", req.cookies);
+    console.log("MIDDLEWARE FUNCTION CALLED");
     const token = req.cookies?.token;
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;

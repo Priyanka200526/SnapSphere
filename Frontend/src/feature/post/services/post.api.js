@@ -24,7 +24,6 @@ export const getUserPosts = async () => {
     const res = await api.get("/")
     return res.data
 }
-
 export const getPostDetails = async (postid) => {
     const res = await api.get(`/details/${postid}`)
     return res.data
@@ -39,4 +38,7 @@ export const toggleSavePostApi = async (postId) => {
     );
     return response.data;
 };
-
+export const getExploreFeedApi = async () => {
+    const response = await api.get("/explore");
+    return response.data;
+};

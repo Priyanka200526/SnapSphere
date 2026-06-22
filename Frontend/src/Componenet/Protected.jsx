@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom'
 
 const Protected = ({ children }) => {
 
-    const { user, loading } = useAuth()
+    const { user, authLoading } = useAuth()
 
-    if (loading) {
+    if (authLoading) {
         return <h1>loading</h1>
     }
     if (!user) {
