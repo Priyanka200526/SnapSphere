@@ -8,6 +8,7 @@ import authModel from '../model/auth.model.js'
 import notificationModel from "../model/notification.model.js";
 import { io } from "../../server.js";
 import followModel from "../model/follow.model.js";
+import mongoose from "mongoose";
 
 const imagekit = new Imagekit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -233,9 +234,8 @@ export const getExploreFeed = asyncHandler(async (req, res) => {
 
   const followingIds = following.map(f => f.followee.toString());
 
-  // khud ko bhi exclude karo
   const excludeIds = [...followingIds, userId];
-  console.log("excludeIds:", excludeIds);
+
   const explorePosts = await postModel.aggregate([
     {
       $match: {
@@ -255,6 +255,7 @@ export const getExploreFeed = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     status: true,
-    data: posts
+    data: posts,
+    
   });
 });
