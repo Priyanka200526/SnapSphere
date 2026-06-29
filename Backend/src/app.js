@@ -9,6 +9,7 @@ import followRoutes from "../src/routes/follow.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import notificationRoutes from "./routes/notication.routes.js";
 import commentRoutes from "./routes/comments.routes.js";
+import storyRoutes from "./routes/story.routes.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/post", postRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/notifications",notificationRoutes)
 app.use("/api/comments",commentRoutes)
+app.use("/api/story",storyRoutes)
 app.get("/test", (req, res) => {
     res.send("Working");
 });

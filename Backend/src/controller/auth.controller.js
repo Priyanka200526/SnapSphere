@@ -22,9 +22,8 @@ export const sendOTPForRegistration = asyncHandler(async (req, res, next) => {
         return next(new AppError("All fields are required", 400));
     }
 
-    const existingUser = await authModel.findOne({
-        $or: [{ username }, { email }]
-    });
+  
+    
 
     if (existingUser) {
         return next(new AppError(

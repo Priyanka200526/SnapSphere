@@ -1,0 +1,222 @@
+// style/storyfeed.scss
+
+// ============ STORY FEED (the row of circles) ============
+.story-feed-wrapper {
+  width: 100%;
+}
+
+.story-feed {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  overflow-x: auto;
+}
+
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 70px;
+}
+
+.story-add {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #888;
+}
+
+.story-add-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-top-color: #555;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.story-username {
+  font-size: 12px;
+  color: #333;
+  max-width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.story-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover; // <-- avatar bhi stretch nahi hoga
+  display: block;
+}
+
+// ============ STORY VIEWER (the fullscreen modal) ============
+
+.story-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+// 👇 Ye container hi tumhara "size" fix karega.
+// Fixed max-width/max-height + aspect-ratio do, taaki
+// image/video apne natural size se bada na ho jaaye.
+.story-viewer-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;          // desktop par bahut bada nahi hoga
+  height: 90vh;
+  max-height: 740px;
+  aspect-ratio: 9 / 16;      // story ka standard portrait ratio
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Media ALWAYS container ke andar fit hoga, bahar nahi nikalega
+.story-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   // crop karke fill karega, distortion nahi hoga
+  display: block;
+}
+
+.story-progress-row {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 5;
+}
+
+.story-progress-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.story-progress-fill {
+  height: 100%;
+  background: #fff;
+  transition: width 0.1s linear;
+}
+
+.story-header {
+  position: absolute;
+  top: 18px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 5;
+}
+
+.story-header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.story-header-username {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.story-header-time {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.story-close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.story-nav-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  z-index: 4;
+  cursor: pointer;
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+}
+
+// ============ MOBILE: full-bleed instead of card ============
+@media (max-width: 480px) {
+  .story-viewer-content {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    aspect-ratio: unset;
+  }
+}

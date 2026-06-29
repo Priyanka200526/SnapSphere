@@ -1,10 +1,11 @@
+import StoryFeed from "../../story/pages/StoryFeed";
 import PostCard from "../components/PostCard";
 import { usePost } from "../hook/usePost";
 import '../style/feed.scss'
 
 const FeedPage = () => {
 
-  const { feed, loading, handleToggleLike, handleDeletePost,handleToggleSave } = usePost();
+  const { feed, loading, handleToggleLike, handleDeletePost, handleToggleSave } = usePost();
 
 
   if (loading) {
@@ -18,6 +19,8 @@ const FeedPage = () => {
     <>
 
       <main className="feed-page">
+
+    <StoryFeed/>
 
         <div className="feed-container">
 
