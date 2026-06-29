@@ -58,9 +58,6 @@ const StoryFeed = () => {
 
   }
 
-  // StoryEditor ke "Apni Story" button se ye call hota hai
-  // finalFile -> text burn hone ke baad ki final image (ya video, jaisa hai waisa)
-  // textItems -> agar future mein backend ko text data alag se chahiye
   async function handleEditorShare(finalFile, textItems) {
 
     setUploading(true);

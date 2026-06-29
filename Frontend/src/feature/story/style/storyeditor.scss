@@ -16,7 +16,8 @@
   max-width: 420px;
   height: 100%;
   max-height: 760px;
-  aspect-ratio: 9 / 16; /* WhatsApp/Instagram standard size */
+  aspect-ratio: 9 / 16;
+  /* WhatsApp/Instagram standard size */
   background: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -56,6 +57,7 @@
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
+
 }
 
 .story-editor-stage {
@@ -70,28 +72,44 @@
 .story-editor-media {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
+  object-fit: contain;
 }
 
 .story-editor-text-item {
   position: absolute;
-  transform: translate(-50%, -50%);
   color: #fff;
-  font-weight: 700;
-  font-size: 24px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 8px;
   cursor: grab;
   user-select: none;
-  padding: 6px 12px;
-  touch-action: none;
-
-  max-width: 85%;
-  word-wrap: break-word;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  z-index: 6;
   white-space: pre-wrap;
-  z-index: 8;
+  max-width: 80%;
+  text-align: center;
+}
 
-  &:active {
-    cursor: grabbing;
+.story-editor-text-actions {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 20;
+  white-space: nowrap;
+
+  button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 0.85rem;
+    cursor: pointer;
   }
 }
 
@@ -105,6 +123,7 @@
   gap: 8px;
   z-index: 10;
 
+
   input {
     flex: 1;
     padding: 10px 14px;
@@ -112,25 +131,29 @@
     border: none;
     outline: none;
     font-size: 15px;
-    background: #ffffff;
-    color: white;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+      'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
     &::placeholder {
       color: #888888;
     }
   }
-
-  button {
-    background: #3b82f6;
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    cursor: pointer;
-  }
 }
+
+button {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 
 .story-editor-bottombar {
   position: absolute;
@@ -157,4 +180,29 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+}
+
+.story-editor-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.story-editor-tool-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .5);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.story-editor-emoji-picker {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
 }

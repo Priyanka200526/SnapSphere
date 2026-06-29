@@ -15,17 +15,15 @@ const StoryViewer = ({ userStories, onClose }) => {
   const currentStory = userStories?.[currentIndex];
 
   function goToNext() {
-
     clearInterval(intervalRef.current);
 
     if (currentIndex < userStories.length - 1) {
-      setCurrentIndex((i) => i + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
     } else {
       onClose();
     }
-
   }
-
   function goToPrev() {
 
     clearInterval(intervalRef.current);
@@ -59,7 +57,6 @@ const StoryViewer = ({ userStories, onClose }) => {
       setProgress((prev) => {
 
         if (prev >= 100) {
-          goToNext();
           return 0;
         }
 
@@ -76,6 +73,11 @@ const StoryViewer = ({ userStories, onClose }) => {
   if (!currentStory) {
     return null;
   }
+  useEffect(() => {
+    if (progress < 100) return;
+
+    goToNext();
+  }, [progress]);
 
   return (
     <div className="story-viewer-overlay" onClick={onClose}>
