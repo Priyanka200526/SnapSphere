@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import '../style/storyeditor.scss'
 import EmojiPicker from "emoji-picker-react";
+import { burnTextOnVideo } from "../../../Componenet/burnTextOnVideo";
 
 const StoryEditor = ({ file, onClose, onShare }) => {
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -25,59 +26,98 @@ const StoryEditor = ({ file, onClose, onShare }) => {
         setMediaType(file.type.startsWith("video") ? "video" : "image");
         return () => URL.revokeObjectURL(url);
     }, [file]);
+    async function burnTextOnImage() {
+        return new Promise((resolve, reject) => {
+            const img = imageRef.current;
+            const canvas = canvasRef.current;
 
-function handleAddTextClick() {
-    setEditingId(null);     // naya text add ho raha hai, edit nahi
-    setDraftText("");
-    setActiveTextInput(true);
-}
+            if (!img || !canvas) {
+                reject(new Error("Image ya canvas ref nahi mila"));
+                return;
+            }
 
-function confirmDraftText() {
-    console.log("confirmDraftText called, draftText:", draftText); // 👈 add karo
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext("2d");
 
-    if (draftText.trim() === "") {
-        console.log("Empty text, closing modal"); // 👈 add karo
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            textItems.forEach((item) => {
+                ctx.save();
+                const posX = (item.x / 100) * canvas.width;
+                const posY = (item.y / 100) * canvas.height;
+                ctx.translate(posX, posY);
+                ctx.font = `${item.fontSize || 32}px sans-serif`;
+                ctx.fillStyle = item.color || "#ffffff";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(item.value, 0, 0);
+                ctx.restore();
+            });
+
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    reject(new Error("Canvas se blob banane mein fail ho gaya"));
+                    return;
+                }
+                const finalFile = new File(
+                    [blob],
+                    `story_image_${Date.now()}.png`,
+                    { type: "image/png" }
+                );
+                resolve(finalFile);
+            }, "image/png");
+        });
+    }
+
+    function handleAddTextClick() {
+        setEditingId(null);     // naya text add ho raha hai, edit nahi
+        setDraftText("");
+        setActiveTextInput(true);
+    }
+
+    function confirmDraftText() {
+
+        if (draftText.trim() === "") {
+            setActiveTextInput(false);
+            setEditingId(null);
+            return;
+        }
+
+        if (editingId) {
+            setTextItems((prev) =>
+                prev.map((t) =>
+                    t.id === editingId ? { ...t, value: draftText } : t
+                )
+            );
+        } else {
+            setTextItems((prev) => [
+                ...prev,
+                {
+                    id: Date.now(),
+                    value: draftText,
+                    x: 50,
+                    y: 50,
+                },
+            ]);
+        }
+
         setActiveTextInput(false);
+        setDraftText("");
         setEditingId(null);
-        return;
     }
 
-    if (editingId) {
-        setTextItems((prev) =>
-            prev.map((t) =>
-                t.id === editingId ? { ...t, value: draftText } : t
-            )
-        );
-    } else {
-        setTextItems((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
-                value: draftText,
-                x: 50,
-                y: 50,
-            },
-        ]);
+    function removeTextItem(id) {
+        setTextItems((prev) => prev.filter((t) => t.id !== id));
+        setActiveMenuId(null);
     }
 
-    console.log("Text added, textItems should update now"); // 👈 add karo
-
-    setActiveTextInput(false);
-    setDraftText("");
-    setEditingId(null);
-}
-
-function removeTextItem(id) {
-    setTextItems((prev) => prev.filter((t) => t.id !== id));
-    setActiveMenuId(null);
-}
-
-function startEditTextItem(item) {
-    setEditingId(item.id);
-    setDraftText(item.value);
-    setActiveTextInput(true);
-    setActiveMenuId(null);
-}
+    function startEditTextItem(item) {
+        setEditingId(item.id);
+        setDraftText(item.value);
+        setActiveTextInput(true);
+        setActiveMenuId(null);
+    }
 
     // ---------- TEXT DRAG (FIXED WITH IMAGE BOUNDS) ----------
     function handleTextPointerDown(e, item) {
@@ -160,18 +200,20 @@ function startEditTextItem(item) {
 
         dragInfoRef.current = null;
     }
-
     async function handleShare() {
         setIsSharing(true);
         try {
+            let finalFile;
             if (mediaType === "image") {
-                const finalFile = await burnTextOnImage();
-                await onShare(finalFile, textItems);
+                finalFile = await burnTextOnImage();
             } else {
-                await onShare(file, textItems);
+                finalFile = await burnTextOnVideo(file, textItems);
             }
+            await onShare(finalFile, textItems);
         } catch (err) {
-            console.log("Story share karne mein error:", err);
+            console.error("Story share karne mein error:", err);
+            alert("Error: " + (err?.message || err));
+            return; // 👈 yahan return zaroori hai
         } finally {
             setIsSharing(false);
         }
@@ -196,98 +238,7 @@ function startEditTextItem(item) {
         return lines;
     }
 
-    function burnTextOnImage() {
-        return new Promise((resolve, reject) => {
-            const img = imageRef.current;
-            const stage = stageRef.current;
-            if (!img || !stage) {
-                reject(new Error("Required elements missing"));
-                return;
-            }
 
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext("2d");
-
-            // 1. Canvas ka aspect ratio hamesha story stage (viewport) jaisa rakhein
-            const stageRect = stage.getBoundingClientRect();
-
-            // Final image high quality banane ke liye base resolution 1080x1920 (Story Standard) rakhein
-            const targetWidth = 1080;
-            const targetHeight = (stageRect.height / stageRect.width) * targetWidth;
-
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-
-            // 2. Object-fit: contain ka logic — poori image fit karein, crop nahi karein
-            const imgWidth = img.naturalWidth;
-            const imgHeight = img.naturalHeight;
-
-            const imgRatio = imgWidth / imgHeight;
-            const canvasRatio = canvas.width / canvas.height;
-
-            // Pehle background ko black se fill karein (letterbox bars ke liye)
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            let drawWidth, drawHeight, dx, dy;
-
-            if (imgRatio > canvasRatio) {
-                // Image chaudi hai (Landscape) - width canvas ke barabar, height usse kam (top/bottom bars)
-                drawWidth = canvas.width;
-                drawHeight = canvas.width / imgRatio;
-                dx = 0;
-                dy = (canvas.height - drawHeight) / 2;
-            } else {
-                // Image lambi hai (Portrait) - height canvas ke barabar, width usse kam (left/right bars)
-                drawHeight = canvas.height;
-                drawWidth = canvas.height * imgRatio;
-                dy = 0;
-                dx = (canvas.width - drawWidth) / 2;
-            }
-
-            // Poori image (sx=0, sy=0, full width/height) ko fit karke draw karein, koi crop nahi
-            ctx.drawImage(img, 0, 0, imgWidth, imgHeight, dx, dy, drawWidth, drawHeight);
-
-            // 3. Ab text items ko unki exact percentage location par draw karein
-            textItems.forEach((item) => {
-                const fontSize = Math.max(32, canvas.width * 0.045);
-                ctx.font = `bold ${fontSize}px sans-serif`;
-                ctx.fillStyle = "#fff";
-                ctx.strokeStyle = "rgba(0,0,0,0.8)";
-                ctx.lineWidth = fontSize * 0.12;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-
-                // Map standard layout percentages directly to matching canvas coordinates
-                let px = (item.x / 100) * canvas.width;
-                let py = (item.y / 100) * canvas.height;
-
-                const maxLineWidth = canvas.width * 0.80;
-                const lines = wrapTextIntoLines(ctx, item.value, maxLineWidth);
-                const lineHeight = fontSize * 1.3;
-                const totalHeight = lines.length * lineHeight;
-
-                let startY = py - totalHeight / 2 + lineHeight / 2;
-
-                lines.forEach((line, i) => {
-                    const y = startY + i * lineHeight;
-                    ctx.strokeText(line, px, y);
-                    ctx.fillText(line, px, y);
-                });
-            });
-
-            canvas.toBlob((blob) => {
-                if (!blob) {
-                    reject(new Error("Canvas export failed"));
-                    return;
-                }
-                const finalFile = new File([blob], file.name || "story.png", {
-                    type: "image/png",
-                });
-                resolve(finalFile);
-            }, "image/png");
-        });
-    }
 
     if (!previewUrl) return null;
 
@@ -360,6 +311,7 @@ function startEditTextItem(item) {
                             autoPlay
                             loop
                             muted
+                            crossOrigin="anonymous"
                         />
                     )}
 

@@ -9,20 +9,24 @@ import {
 } from "../controller/story.controller.js";
 
 const fileFilter = (req, file, cb) => {
-
+  console.log("Checking mimetype:", file.mimetype); // ye add karo debug ke liye
+  
   const allowedTypes = [
     "image/jpeg",
     "image/png",
     "image/webp",
-    "video/mp4"
+    "video/mp4",
+    "video/webm"
   ];
 
-  if (allowedTypes.includes(file.mimetype)) {
+  const baseMimeType = file.mimetype.split(";")[0].trim();
+  console.log("Base mimetype:", baseMimeType); // ye bhi
+
+  if (allowedTypes.includes(baseMimeType)) {
     cb(null, true);
   } else {
     cb(new Error("Only image/video files allowed"));
   }
-
 };
 
 const upload = multer({
@@ -34,8 +38,19 @@ const upload = multer({
 });
 
 const storyRoutes = express.Router();
-
-storyRoutes.post("/upload", identifyUser, upload.single("media"), uploadStory);
+storyRoutes.post("/upload",
+  identifyUser,
+  (req, res, next) => {
+    upload.single("media")(req, res, (err) => {
+      if (err) {
+        console.error("MULTER ERROR:", err); // ye zaroor print karega
+        return res.status(400).json({ status: false, message: err.message });
+      }
+      next();
+    });
+  },
+  uploadStory
+);
 storyRoutes.get("/feed", identifyUser, getStories);
 storyRoutes.post("/:storyId/view", identifyUser, viewStory);
 storyRoutes.get("/:storyId/viewers", identifyUser, getStoryViewers);

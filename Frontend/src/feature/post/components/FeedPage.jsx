@@ -17,11 +17,8 @@ const FeedPage = () => {
   }
   return (
     <>
-
+      <StoryFeed />
       <main className="feed-page">
-
-    <StoryFeed/>
-
         <div className="feed-container">
 
           {feed?.length === 0 ? (

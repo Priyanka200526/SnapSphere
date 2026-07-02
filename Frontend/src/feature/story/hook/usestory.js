@@ -14,14 +14,11 @@ export const useStory = () => {
         selectedStory, setSelectedStory
     } = useContext(StoryContext);
 
-    async function handleUploadStory(file) {
+    async function handleUploadStory(file, textItems = []) {
         try {
-            const data = await uploadStoryApi(file);
-
+            const data = await uploadStoryApi(file, textItems);
             setStories(prev => [data.story, ...prev]);
-
             return data.story;
-
         } catch (err) {
             console.log(err);
         }
@@ -33,7 +30,7 @@ export const useStory = () => {
             setStories(data.stories);
             return data.stories;
             console.log(data);
-            
+
         } catch (err) {
             console.log(err);
         }
@@ -54,7 +51,7 @@ export const useStory = () => {
 
             const data = await getStoryViewersApi(storyId);
             console.log(data);
-            
+
 
             return data.views;
 

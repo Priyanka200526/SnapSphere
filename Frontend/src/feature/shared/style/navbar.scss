@@ -79,20 +79,23 @@
     color: #2563eb;
 }
 
-/* profile */
-
 .profile-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    color: white;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .notification-btn {

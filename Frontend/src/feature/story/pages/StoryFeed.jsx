@@ -46,34 +46,27 @@ const StoryFeed = () => {
     fileInputRef.current?.click();
   }
 
-  // Ab yahan seedha upload nahi karte - sirf file ko state mein rakhte hain
-  // taaki StoryEditor khul jaye aur user text/sticker add kar sake
   function handleFileSelected(e) {
 
     const file = e.target.files[0];
     if (!file) return;
 
     setSelectedFile(file);
-    e.target.value = ""; // input reset, taaki same file dubara select ho sake
-
+    e.target.value = ""; 
   }
 
   async function handleEditorShare(finalFile, textItems) {
 
     setUploading(true);
-
     try {
-
-      await handleUploadStory(finalFile);
+      await handleUploadStory(finalFile, textItems);
       await handleGetStoriesFeed();
-
     } catch (err) {
       console.log(err);
     } finally {
       setUploading(false);
-      setSelectedFile(null); // editor band karo
+      setSelectedFile(null);
     }
-
   }
 
   return (
@@ -124,8 +117,6 @@ const StoryFeed = () => {
         )}
 
       </div>
-
-      {/* File select hone ke baad ye editor khulta hai - text/sticker add karne ke liye */}
       {selectedFile && (
         <StoryEditor
           file={selectedFile}

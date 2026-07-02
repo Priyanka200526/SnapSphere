@@ -84,7 +84,6 @@ const Navbar = () => {
         >
           <FiUser />
         </button>
-
       </div>
 
     </nav>

@@ -12,7 +12,7 @@ const imagekit = new Imagekit({
 });
 
 export const uploadStory = asyncHandler(async (req, res, next) => {
-
+console.log("FILE RECEIVED:", req.file); // ye check karo
   if (!req.file) {
     return next(new AppError("Media file is required", 400));
   }
@@ -24,6 +24,7 @@ export const uploadStory = asyncHandler(async (req, res, next) => {
     fileName: `story_${Date.now()}.${isVideo ? "mp4" : "jpg"}`,
     folder: "user_story",
   });
+   console.log("IMAGEKIT SUCCESS:", uploaded.url);
 
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);

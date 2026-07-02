@@ -1,18 +1,17 @@
-// service/story.api.js
 import axios from 'axios';
 
 const api = axios.create({
     baseURL: "http://localhost:3000/api/story",
     withCredentials: true
 });
-
-export const uploadStoryApi = async (file) => {
+export const uploadStoryApi = async (file, textItems = []) => {
     const formData = new FormData();
     formData.append("media", file);
-
-    const { data } = await api.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-    });
+    formData.append("textItems", JSON.stringify(textItems));
+    for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+    }
+    const { data } = await api.post("/upload", formData);
     return data;
 };
 
