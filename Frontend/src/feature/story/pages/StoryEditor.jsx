@@ -26,6 +26,7 @@ const StoryEditor = ({ file, onClose, onShare }) => {
         setMediaType(file.type.startsWith("video") ? "video" : "image");
         return () => URL.revokeObjectURL(url);
     }, [file]);
+
     async function burnTextOnImage() {
         return new Promise((resolve, reject) => {
             const img = imageRef.current;
@@ -36,18 +37,28 @@ const StoryEditor = ({ file, onClose, onShare }) => {
                 return;
             }
 
+            // Safety: agar image abhi tak decode nahi hui
+            if (!img.complete || img.naturalWidth === 0) {
+                reject(new Error("Image abhi load nahi hui, thoda ruk ke try karo"));
+                return;
+            }
+
             canvas.width = img.naturalWidth;
             canvas.height = img.naturalHeight;
             const ctx = canvas.getContext("2d");
 
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
+            // font size bhi scale karo, warna chhoti preview image pe
+            // 32px text bada dikhega aur high-res original pe chhota
+            const scaleFactor = canvas.width / (img.getBoundingClientRect().width || canvas.width);
+
             textItems.forEach((item) => {
                 ctx.save();
                 const posX = (item.x / 100) * canvas.width;
                 const posY = (item.y / 100) * canvas.height;
                 ctx.translate(posX, posY);
-                ctx.font = `${item.fontSize || 32}px sans-serif`;
+                ctx.font = `${(item.fontSize || 32) * scaleFactor}px sans-serif`;
                 ctx.fillStyle = item.color || "#ffffff";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
@@ -69,7 +80,34 @@ const StoryEditor = ({ file, onClose, onShare }) => {
             }, "image/png");
         });
     }
-
+function getVisibleContentRect(mediaEl, naturalWidth, naturalHeight) {
+    const boxRect = mediaEl.getBoundingClientRect();
+    const boxRatio = boxRect.width / boxRect.height;
+    const mediaRatio = naturalWidth / naturalHeight;
+ 
+    let contentWidth, contentHeight, offsetX, offsetY;
+ 
+    if (mediaRatio > boxRatio) {
+        // media box se zyada chaudi hai -> top/bottom letterbox
+        contentWidth = boxRect.width;
+        contentHeight = boxRect.width / mediaRatio;
+        offsetX = 0;
+        offsetY = (boxRect.height - contentHeight) / 2;
+    } else {
+        // media box se zyada lambi hai -> left/right letterbox
+        contentHeight = boxRect.height;
+        contentWidth = boxRect.height * mediaRatio;
+        offsetY = 0;
+        offsetX = (boxRect.width - contentWidth) / 2;
+    }
+ 
+    return {
+        left: boxRect.left + offsetX,
+        top: boxRect.top + offsetY,
+        width: contentWidth,
+        height: contentHeight,
+    };
+}
     function handleAddTextClick() {
         setEditingId(null);     // naya text add ho raha hai, edit nahi
         setDraftText("");
@@ -126,7 +164,11 @@ const StoryEditor = ({ file, onClose, onShare }) => {
         const mediaEl = stageRef.current.querySelector(".story-editor-media");
         if (!mediaEl) return;
 
-        const mediaRect = mediaEl.getBoundingClientRect();
+        // naturalWidth/Height video ke liye videoWidth/videoHeight use karo
+        const naturalWidth = mediaEl.naturalWidth || mediaEl.videoWidth;
+        const naturalHeight = mediaEl.naturalHeight || mediaEl.videoHeight;
+
+        const contentRect = getVisibleContentRect(mediaEl, naturalWidth, naturalHeight);
 
         dragInfoRef.current = {
             id: item.id,
@@ -135,9 +177,9 @@ const StoryEditor = ({ file, onClose, onShare }) => {
             startY: e.clientY,
             origX: item.x,
             origY: item.y,
-            mediaWidth: mediaRect.width,
-            mediaHeight: mediaRect.height,
-            moved: false, // 👈 naya — track karega ki drag hua ya nahi
+            mediaWidth: contentRect.width,   // 👈 mediaRect.width nahi, ab contentRect
+            mediaHeight: contentRect.height, // 👈 letterbox exclude ho gaya
+            moved: false,
         };
 
         window.addEventListener("pointermove", handleTextPointerMove);
@@ -354,7 +396,7 @@ const StoryEditor = ({ file, onClose, onShare }) => {
                         onClick={handleShare}
                         disabled={isSharing}
                     >
-                        {isSharing ? "Upload ho raha hai..." : "Apni Story"}
+                        {isSharing ? "Uploading..." : "Share to Story"}
                     </button>
                 </div>
                 <canvas ref={canvasRef} style={{ display: "none" }} />

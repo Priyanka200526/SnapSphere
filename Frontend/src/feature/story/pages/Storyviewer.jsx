@@ -1,7 +1,7 @@
 // components/StoryViewer.jsx
 import { useEffect, useState, useRef } from "react";
 import { useStory } from "../hook/useStory";
-import "../style/storyfeed.scss"
+import "../style/storyviewer.scss"
 
 const STORY_DURATION = 5000;
 
@@ -121,6 +121,9 @@ const StoryViewer = ({ userStories, onClose }) => {
           <img className="story-media" src={currentStory.mediaUrl} alt="story" />
         ) : (
           <video className="story-media" src={currentStory?.mediaUrl} autoPlay />
+        )}
+        {currentStory?.caption && (
+          <div className="story-caption">{currentStory.caption}</div>
         )}
 
       </div>
